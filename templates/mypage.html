@@ -59,7 +59,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         // 세션 스토리지에서 액세스 토큰 가져오기
         const token = sessionStorage.getItem('access_token');
-        
+
         // 세션 스토리지에 액세스 토큰이 없는 경우
         if (!token) {
             alert('로그인이 필요합니다.');
@@ -89,7 +89,7 @@
             document.getElementById('user-id').innerText = user_id_from_token;
         }
 
-        
+
         // 비밀번호 수정 버튼 클릭 시 폼 토글
         document.getElementById('edit-pw-button').addEventListener('click', function () {
             const pwChangeForm = document.getElementById('pw-change-form');

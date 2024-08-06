@@ -10,19 +10,23 @@
         <!-- 글 작성자 id == 토큰 아이디인 경우 -> 수정 버튼 display -->
         <button type="submit" class="button is-primary">수정</button>
     </div>
-<div style="display: flex; align-items: center; justify-content: flex-start; width: 100%; margin-bottom: 10px;">
-    <p class="subtitle has-text-black" style="flex: 0 0 10%; padding-right: 10px; white-space: nowrap; line-height: 1.5;">제목</p>
-    <div class="box" style="flex: 1 0 90%; padding: 10px; background-color: rgb(245, 245, 245); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;">
-        {{concern.title}}
+    <div style="display: flex; align-items: center; justify-content: flex-start; width: 100%; margin-bottom: 10px;">
+        <p class="subtitle has-text-black"
+            style="flex: 0 0 10%; padding-right: 10px; white-space: nowrap; line-height: 1.5;">제목</p>
+        <div class="box"
+            style="flex: 1 0 90%; padding: 10px; background-color: rgb(245, 245, 245); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;">
+            {{concern.title}}
+        </div>
     </div>
-</div>
-<div style="display: flex; align-items: center; justify-content: flex-start; width: 100%;">
-    <p class="subtitle has-text-black" style="flex: 0 0 10%; padding-right: 10px; white-space: nowrap; line-height: 1.5;">닉네임</p>
-    <div class="box" style="flex: 1 0 90%; padding: 10px; background-color: rgb(245, 245, 245); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;">
-        {{concern.created_by}}
+    <div style="display: flex; align-items: center; justify-content: flex-start; width: 100%;">
+        <p class="subtitle has-text-black"
+            style="flex: 0 0 10%; padding-right: 10px; white-space: nowrap; line-height: 1.5;">닉네임</p>
+        <div class="box"
+            style="flex: 1 0 90%; padding: 10px; background-color: rgb(245, 245, 245); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;">
+            {{concern.created_by}}
+        </div>
     </div>
-</div>
- 
+
     <p class="subtitle has-text-black">내용</p>
     <div class="content" style="background-color: rgb(245,245,245); height: 300px">
         <p>{{concern.content}}</p>
@@ -60,11 +64,11 @@
         </div>
     </form>
     <div id="comments">
-    {% for solution in solutions %}
+        {% for solution in solutions %}
         <div class="box">
             <p><strong>{{solution.created_by}} </strong>| {{solution.content}}</p>
         </div>
-    {% endfor %}
+        {% endfor %}
         <div class="box">
             <p><strong>너구리 </strong>| 힘내세요</p>
         </div>
