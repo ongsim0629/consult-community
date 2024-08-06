@@ -34,8 +34,6 @@
         const client_id = $('#user_id').val();
         const client_password = $('#password').val();
 
-        console.log(client_id, client_password);
-
         $.ajax({
             type: 'POST',
             url: '/api/user/sign-in',
