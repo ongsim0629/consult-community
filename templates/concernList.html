@@ -7,56 +7,47 @@
     <div class="section">
         <h1 class="title has-text-black">TOP 5</h1>
         <div id="top-5-posts">
-            <!-- {% for post in top_posts %} -->
+            {% for post in topList %}
                 <!-- 여기 사이에 박스 집어넣어서 5번 반복 -->
-            <!-- {% endfor %} -->
-            <div class="box">
+            <div class="box" onclick="location.href='/concern/detail?concern_id={{ post._id }}'">
                 <article class="media">
                     <div class="media-content">
                         <div class="content">
                             <p class="has-text-black">
-                                <h2 class="subtitle">제목</h2>
-                                <p>작성자 | 조회수: 1</p>
+                                <h2 class="subtitle">{{ post.title }}</h2>
+                                <p>{{ post.created_by }} | 조회수: {{ post.view_count }}</p>
                             </p>
                         </div>
                     </div>
                 </article>
             </div>
-            <div class="box">
-                <article class="media">
-                    <div class="media-content">
-                        <div class="content">
-                            <p class="has-text-black">
-                                <h2 class="subtitle">제목</h2>
-                                <p>작성자 | 조회수: 1</p>
-                            </p>
-                        </div>
-                    </div>
-                </article>
-            </div>
-            <div class="box">
-                <article class="media">
-                    <div class="media-content">
-                        <div class="content">
-                            <p class="has-text-black">
-                                <h2 class="subtitle">제목</h2>
-                                <p>작성자 | 조회수: 1</p>
-                            </p>
-                        </div>
-                    </div>
-                </article>
-            </div>
+            {% endfor %}
         </div>
     </div>
 
 <section class="section">
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <h1 class="title has-text-black" style="margin-right: 10px;">전체 고민들</h1>
-        <button type="submit" class="button is-primary"></button>
+        <button type="button" class="button is-primary"
+        onclick="location.href='/concern/add'">고민 생성</button>
+
     </div>
     
     <div id="worries-list">
-        <!-- 고민 목록이 이곳에 동적으로 추가될 예정 -->
+        {% for post in concernList %}
+        <div class="box" onclick="location.href='/concern/detail?concern_id={{ post._id }}'">
+            <article class="media">
+                <div class="media-content">
+                    <div class="content">
+                        <p class="has-text-black">
+                            <h2 class="subtitle">{{ post.title }}</h2>
+                            <p>{{ post.created_by }} | 조회수: {{ post.view_count }}</p>
+                        </p>
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% endfor %}
     </div>
 
     <!-- 로딩 스피너 -->
@@ -66,7 +57,7 @@
 </section>
 </div>
 
-<script>
+<!--<script>
     document.addEventListener('DOMContentLoaded', function () {
         let allWorries = [];
         let index = 0;
@@ -117,5 +108,5 @@
             }
         });
     });
-</script>
+</script>-->
 {% endblock %}
