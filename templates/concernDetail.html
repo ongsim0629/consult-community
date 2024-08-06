@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}해우소 - 고민 상세 페이지{% endblock %}
+
+{% block content %}
+
+<div class="section">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h1 class="title has-text-black" style="margin-right: 10px;">고민 읽기</h1>
+        <!-- 글 작성자 id == 토큰 아이디인 경우 -> 수정 버튼 display -->
+        <button type="submit" class="button is-primary">수정</button>
+    </div>
+<div style="display: flex; align-items: center; justify-content: flex-start; width: 100%; margin-bottom: 10px;">
+    <p class="subtitle has-text-black" style="flex: 0 0 10%; padding-right: 10px; white-space: nowrap; line-height: 1.5;">제목</p>
+    <div class="box" style="flex: 1 0 90%; padding: 10px; background-color: rgb(245, 245, 245); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;">
+        제목입니다.
+    </div>
+</div>
+<div style="display: flex; align-items: center; justify-content: flex-start; width: 100%;">
+    <p class="subtitle has-text-black" style="flex: 0 0 10%; padding-right: 10px; white-space: nowrap; line-height: 1.5;">닉네임</p>
+    <div class="box" style="flex: 1 0 90%; padding: 10px; background-color: rgb(245, 245, 245); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;">
+        닉네임 1
+    </div>
+</div>
+ 
+    <p class="subtitle has-text-black">내용</p>
+    <div class="content" style="background-color: rgb(245,245,245); height: 300px">
+        <p>제목입니다 고민글의 내용</p>
+    </div>
+</div>
+
+
+<div class="section">
+    <h2 class="title has-text-black">솔루션</h2>
+    <form id="comment-form">
+        <div class="field">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <label class="label">새 댓글</label>
+                <div class="field">
+                    <div class="control">
+                        <label class="radio">
+                            <input type="radio" name="visibility" value="public" checked>
+                            공개
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="visibility" value="private">
+                            비공개
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <div class="control" style="flex-grow: 1; margin-right: 10px;">
+                    <input class="input" type="text" placeholder="댓글 내용을 입력하세요" style="width: 100%;">
+                </div>
+                <div class="control">
+                    <button class="button is-primary">댓글 추가</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div id="comments">
+        <div class="box">
+            <p><strong>너구리 </strong>| 힘내세요</p>
+        </div>
+        <div class="box">
+            <p><span style="color:rgb(175, 175, 175)">익명 스님의 해답입니다.</span></p>
+        </div>
+        <div class="box">
+            <p><strong>익명 스님 </strong>| 화이팅</p>
+        </div>
+        <div class="box">
+            <div style="display: flex; align-items: center;">
+                <div class="control" style="flex-grow: 1; margin-right: 10px;">
+                    <p><strong>강아지 </strong>| 할 수 있어요</p>
+                </div>
+                <!-- 댓글 작성자 id == 토큰 아이디인 경우 -> 삭제 버튼 display -->
+                <div class="control">
+                    <button class="button is-danger">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
