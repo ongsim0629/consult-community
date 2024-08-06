@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, jsonify, render_template, request, redirect
 from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
@@ -25,7 +25,7 @@ def getConcernList():
 
     topList = list(db.concerns.find({}).sort('view_count', -1).limit(5))
 
-    concernList = list(db.concerns.find({}))
+    concernList = list(db.concerns.find({}).sort('created_at', -1))
    
     for i in topList:
         i['_id'] = str(i['_id'])
@@ -46,7 +46,7 @@ def getConcernListTest():
 
     topList = list(db.concerns.find({}).sort('view_count', -1).limit(5))
 
-    concernList = list(db.concerns.find({}))
+    concernList = list(db.concerns.find({}).sort('created_at', 1))
    
     for i in topList:
         i['_id'] = str(i['_id'])
@@ -55,15 +55,15 @@ def getConcernListTest():
         i['_id'] = str(i['_id'])
 
     return jsonify({'result':'success', 'topList':topList, 'concernList':concernList, 'msg':'getConcernList 성공!'})
-    ## TODO : 위에꺼 없애고 concernList 화면 랜더링
-    ## 무한 스크롤(페이징) 고민
+    ## TODO : 추후 삭제
 
 ## addConcern 화면 렌더링
 @concern_bp.route('/concern/add', methods=['GET'])
 def addConcernForm():
 
-    return jsonify({'result':'success', 'msg':'addConcernForm 성공!'})
-    ## TODO : 위에꺼 없애고 addConcern 화면 랜더링
+    return render_template(
+        'addConcern.html'
+    )
 
 ## addConcern에서 고민 추가
 @concern_bp.route('/concern/add', methods=['POST'])
@@ -76,13 +76,14 @@ def addConcern():
         'revealed':strToBool(formData['revealed']),
         'view_count':0,
         'created_at':now,
-        'created_by':"닉네임TEST1",
+        'created_by':"닉네임TEST1", # 토큰에서 값 가져온다.
         'updated_at':now
     }
     print(concernData)
 
     db.concerns.insert_one(concernData)
-    return jsonify({'result': 'success', 'msg':'addConcern 성공!'})
+    return redirect('/concern/concernList')
+    #return jsonify({'result': 'success', 'msg':'addConcern 성공!'})
     ## TODO : 위에꺼 없애고 만들어진 고민으로 리다이렉트
         ## : JWT에서 닉네임 받기
         ## : revealed 저장하는 방식 생각해보기
@@ -93,11 +94,17 @@ def addConcern():
 def getConcernDetail():
     ## 쿼리스트링에서 고민 id 받기
     concernId = request.args.get('concern_id')
-    concern = db.concerns.find_one({"_id" : concernId})
-    solutions = db.concerns.find({'concern_id' : concernId})
+    concern = db.concerns.find_one({'_id' : ObjectId(concernId)})
+    concern['_id'] = str(concern['_id']) # ObjectId는 Json 안에 담을 수 없다. String으로 바꿔줄 것
+    solutions = list(db.concerns.find({'concern_id' : concernId}))
 
-    return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
-    ## TODO : 위에꺼 없애고 concernDetail 화면 랜더링
+    return render_template(
+        'concernDetail.html',
+        concern = concern,
+        solutions = solutions
+    )
+
+    # return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
 
 ## solution 생성 (API)
 @concern_bp.route('/concern/solution', methods=['POST'])
@@ -114,7 +121,8 @@ def addSolution():
         'updated_at':now
     }
     db.solutions.insert_one(solutionData)
-    return jsonify({'result':'success', 'msg':'addSolution 성공!'})
+    return redirect('/concern/concernList')
+    #return jsonify({'result':'success', 'msg':'addSolution 성공!'})
 
 ## solution 삭제 (API)
 @concern_bp.route('/concern/solution/<concern_id>', methods=['DELETE'])
