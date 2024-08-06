@@ -5,7 +5,7 @@
 ```
 $ py -3 -m venv .venv
 $ .venv\Scripts\activate
-(.venv) $ pip install flask requests bs4 pymongo python-dotenv
+(.venv) $ pip install flask requests bs4 pymongo python-dotenv PyJWT
 (.venv) $ python app.py #서버 실행
 (.venv) $ deactivate #가상환경 종료
 

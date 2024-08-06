@@ -1,9 +1,10 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask
 from apps.concern import concern_bp
+from apps.user import user_bp
 
 app = Flask(__name__)
 
-## blueprint 등록
+app.register_blueprint(user_bp)
 app.register_blueprint(concern_bp)
 
 if __name__ == '__main__':
