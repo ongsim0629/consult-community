@@ -1,3 +1,38 @@
+<script>
+  function handleSubmit() {
+    const nickname = $('input[name="nickname"]').val();
+    const user_id = $('input[name="id"]').val();
+    const password = $('input[name="password"]').val();
+    const confirmed_password = $('input[name="confirm_password"]').val();
+
+    if (password !== confirmed_password) {
+      alert("PW를 다시 확인해주세요");
+      return;
+    }
+
+    const data = {
+      user_id,
+      password,
+      nickname,
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/api/user/sign-up",
+      contentType: "application/json",
+      data: JSON.stringify(data),
+      success: function (res) {
+        const PAGE_SIGN_IN = "/signin";
+        window.location.href = PAGE_SIGN_IN;
+      },
+      error: function (xhr, status, error) {
+        const errorMessage = xhr.responseJSON.message;
+        alert(errorMessage);
+      },
+    });
+  }
+</script>
+
 {% extends 'base.html' %} {% block title %}회원 가입{% endblock %} {% block
 content %}
 <div class="columns is-mobile is-centered">
@@ -59,7 +94,11 @@ content %}
 
       <div class="field">
         <div class="control">
-          <button class="button is-primary is-fullwidth" type="submit">
+          <button
+            class="button is-primary is-fullwidth"
+            type="button"
+            onclick="handleSubmit()"
+          >
             가입 완료
           </button>
         </div>
