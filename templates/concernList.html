@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}해우소 - 고민 게시판{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="section">
+        <h1 class="title has-text-black">TOP 5</h1>
+        <div id="top-5-posts">
+            <!-- {% for post in top_posts %} -->
+                <!-- 여기 사이에 박스 집어넣어서 5번 반복 -->
+            <!-- {% endfor %} -->
+            <div class="box">
+                <article class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <p class="has-text-black">
+                                <h2 class="subtitle">제목</h2>
+                                <p>작성자 | 조회수: 1</p>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div class="box">
+                <article class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <p class="has-text-black">
+                                <h2 class="subtitle">제목</h2>
+                                <p>작성자 | 조회수: 1</p>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div class="box">
+                <article class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <p class="has-text-black">
+                                <h2 class="subtitle">제목</h2>
+                                <p>작성자 | 조회수: 1</p>
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+<section class="section">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h1 class="title has-text-black" style="margin-right: 10px;">전체 고민들</h1>
+        <button type="submit" class="button is-primary"></button>
+    </div>
+    
+    <div id="worries-list">
+        <!-- 고민 목록이 이곳에 동적으로 추가될 예정 -->
+    </div>
+
+    <!-- 로딩 스피너 -->
+    <div id="loading-spinner" class="has-text-centered" style="display: none;">
+        <button class="button is-loading is-primary is-outlined">Loading</button>
+    </div>
+</section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let allWorries = [];
+        let index = 0;
+        const itemsPerPage = 10;
+        let isLoading = false;
+
+        function loadWorries() {
+            if (isLoading || index >= allWorries.length) return;
+            isLoading = true;
+            document.getElementById('loading-spinner').style.display = 'block';
+
+            const worriesList = document.getElementById('worries-list');
+            for (let i = index; i < index + itemsPerPage && i < allWorries.length; i++) {
+                const worry = allWorries[i];
+                const title = worry.title || 'No title';
+                const author = worry.author || 'Unknown author';
+                const content = worry.content || 'No content';
+
+                const worryItem = document.createElement('div');
+                worryItem.classList.add('box');
+
+                worryItem.innerHTML = `
+                            <h2 class="subtitle">${worry.title}</h2>
+                            <p>${worry.author} | 조회수: ${worry.views}</p>
+                `;
+                worriesList.appendChild(worryItem);
+            }
+            index += itemsPerPage;
+            isLoading = false;
+            if (index >= allWorries.length) {
+                document.getElementById('loading-spinner').style.display = 'none';
+            }
+        }
+
+        fetch(`/api/worries`)
+            .then(response => response.json())
+            .then(data => {
+                allWorries = data.worries_sorted_by_date;
+                loadWorries();  // 초기 고민글 로드
+            })
+            .catch(error => {
+                console.error('Error loading worries:', error);
+            });
+
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                loadWorries();
+            }
+        });
+    });
+</script>
+{% endblock %}
