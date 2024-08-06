@@ -3,28 +3,18 @@ from flask import Blueprint, jsonify, request
 from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
-
-import datetime
-import jwt
+from .auth import UserObject, create_access_token, decode_access_token, get_token_from_header
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
 MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
-SECRET_KEY = os.environ.get("SECRET_KEY")
 COLLECTION_NAME = 'users'
 
 user_bp = Blueprint('user_bp', __name__)
+
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
-def create_access_token(identity):
-    """Create JWT access token"""
-    expiration = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
-    token = jwt.encode({
-        'identity': identity,
-        'exp': expiration
-    }, SECRET_KEY, algorithm='HS256')
-    return token
 
 # 회원가입
 @user_bp.route('/api/user/sign-up', methods=["POST"])
@@ -95,7 +85,8 @@ def signin():
     user = db[COLLECTION_NAME].find_one({"user_id": user_id, "password": user_pw})
 
     if user:
-        access_token = create_access_token(identity=user_id)
+        user_obj = UserObject(user['user_id'], user['nickname'])
+        access_token = create_access_token(user_obj)
         return jsonify({
             "access_token": access_token
         }), 200
@@ -104,6 +95,32 @@ def signin():
         return jsonify({
             "message": "존재하지 않는 유저입니다."
         }), 404
+
+
+@user_bp.route('/api/user/info', methods=["GET"])
+def get_user_info():
+    
+    ## ===== TODO: (시작) 분리 고민 필요 =====
+    token = get_token_from_header()
+    
+    if not token:
+        return({ "message": "Token is missing" }), 403
+    
+    user_dict, error = decode_access_token(token)
+        
+    if error:
+        return({ "message": error }), 403
+    
+    ## ===== TODO: (끝) 분리 고민 필요 =====
+
+    user_id = user_dict['user_id']
+    nickname = user_dict['nickname']
+    
+    return jsonify({
+        'user_id': user_id,
+        'nickname': nickname
+    }), 200
+    
 
 # @user_bp.route('/api/user/set-pw', methods=["POST"])
 
