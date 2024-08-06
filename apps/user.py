@@ -11,7 +11,7 @@ load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
 MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
 SECRET_KEY = os.environ.get("SECRET_KEY")
-# TODO: COLLECTION_NAME 분리하기
+COLLECTION_NAME = 'users'
 
 user_bp = Blueprint('user_bp', __name__)
 client = MongoClient(MONGO_DB_URI)
@@ -26,7 +26,6 @@ def create_access_token(identity):
     }, SECRET_KEY, algorithm='HS256')
     return token
 
-#'localhost:3000/user/sign-up' #화면을 불러올때는
 # 회원가입
 @user_bp.route('/api/user/sign-up', methods=["POST"])
 def todo():  
@@ -52,20 +51,20 @@ def todo():
         }), 400
     
     # 2. 중복 유저 체크
-    user_by_id = db.users.find_one({"user_id": user_id})
+    user_by_id = db[COLLECTION_NAME].find_one({"user_id": user_id})
     if user_by_id:
         return jsonify({
             "message": "중복된 아이디 입니다."
         }), 409
         
-    user_by_nickname = db.users.find_one({"nickname": nickname})
+    user_by_nickname = db[COLLECTION_NAME].find_one({"nickname": nickname})
     if user_by_nickname:
         return jsonify({
             "message": "중복된 닉네임 입니다."
         }), 409
 
     # 3. 비로소 생성 완료
-    user = db.users.insert_one({
+    user = db[COLLECTION_NAME].insert_one({
         "user_id": user_id,
         "password": user_pw,
         "nickname": nickname
@@ -93,7 +92,7 @@ def signin():
             "message": "pw를 입력해주세요"
         }), 400
         
-    user = db.users.find_one({"user_id": user_id, "password": user_pw})
+    user = db[COLLECTION_NAME].find_one({"user_id": user_id, "password": user_pw})
 
     if user:
         access_token = create_access_token(identity=user_id)
