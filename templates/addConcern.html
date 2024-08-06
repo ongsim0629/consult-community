@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+ 해우소{% endblock %}
+
+{% block content %}
+<h1 class="title has-text-black">고민 작성</h1>
+<form id="postForm">
+    <div class="field">
+        <label class="label has-text-black">제목</label>
+        <div class="control">
+            <input class="input" type="text" placeholder="고민의 제목을 입력하세요" required>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <label class="radio">
+                <input type="radio" name="answer" checked="checked"/>
+                익명
+            </label>
+            <label class="radio">
+                <input type="radio" name="answer" />
+                실명
+            </label>
+        </div>
+    </div>
+    <div class="field">
+        <label class="label has-text-black">내용</label>
+        <div class="control">
+            <textarea class="textarea" placeholder="고민의 내용을 입력하세요" required></textarea>
+        </div>
+    </div>
+    <div class="field is-grouped">
+        <div class="control">
+            <button type="submit" class="button is-pri">게시하기</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

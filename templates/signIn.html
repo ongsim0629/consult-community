@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}로그인 - 해우소{% endblock %}
+
+{% block content %}
+<h1 class="title has-text-black">고민 解憂所</h1>
+<form id="loginForm">
+    <div class="field">
+        <label class="label has-text-black">ID</label>
+        <div class="control">
+            <input class="input" type="email" placeholder="이메일을 입력하세요" required>
+        </div>
+    </div>
+    <div class="field">
+        <label class="label has-text-black">비밀번호</label>
+        <div class="control">
+            <input class="input" type="password" placeholder="비밀번호를 입력하세요" required>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <button type="submit" class="button is-primary">로그인</button>
+            <button type="submit" class="button is-primary">회원 가입</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
