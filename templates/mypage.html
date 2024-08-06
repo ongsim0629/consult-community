@@ -54,17 +54,42 @@
     </section>
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // 사용자 정보 가져오기 -> 지금은 더미데이터임
-        fetch('/api/user-info')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('nickname').innerText = data.nickname;
-                document.getElementById('user-id').innerText = data.user_id;
-            });
+        // 세션 스토리지에서 액세스 토큰 가져오기
+        const token = sessionStorage.getItem('access_token');
+        
+        // 세션 스토리지에 액세스 토큰이 없는 경우
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            window.location.href = '/login';
+            return;
+        }
+        // 세션 스토리지에 액세스 토큰이 있으면 -> 디코딩 시작
+        else {
+            const base64Payload = token.split('.')[1];
+            const base64 = base64Payload.replace(/-/g, '+').replace(/_/g, '/');
+            const decodedJWT = JSON.parse(
+                decodeURIComponent(
+                    window
+                        .atob(base64)
+                        .split('')
+                        .map(function (c) {
+                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                        })
+                        .join('')
+                )
+            );
 
+            const user_id_from_token = decodedJWT.user_id;
+            const nickname_from_tokne = decodedJWT.nickname;
+
+            document.getElementById('nickname').innerText = nickname_from_tokne;
+            document.getElementById('user-id').innerText = user_id_from_token;
+        }
+
+        
         // 비밀번호 수정 버튼 클릭 시 폼 토글
         document.getElementById('edit-pw-button').addEventListener('click', function () {
             const pwChangeForm = document.getElementById('pw-change-form');
@@ -82,7 +107,8 @@
                 fetch('/api/change-password', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
                     },
                     body: JSON.stringify({
                         current_password: currentPassword,
@@ -100,59 +126,54 @@
                 alert('New passwords do not match');
             }
         });
-
-        // 무한 스크롤 부분
-        let page = 1;
+        let allWorries = [];
+        let index = 0;
+        const itemsPerPage = 10;
         let isLoading = false;
 
         function loadWorries() {
-            if (isLoading) return;
+            if (isLoading || index >= allWorries.length) return;
             isLoading = true;
             document.getElementById('loading-spinner').style.display = 'block';
 
-            fetch(`/api/worries?page=${page}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const worriesList = document.getElementById('worries-list');
-                    data.worries.forEach(worry => {
-                        const worryItem = document.createElement('div');
-                        worryItem.classList.add('box');
+            const worriesList = document.getElementById('worries-list');
+            for (let i = index; i < index + itemsPerPage && i < allWorries.length; i++) {
+                const worry = allWorries[i];
+                const title = worry.title || 'No title';
+                const author = worry.author || 'Unknown author';
+                const content = worry.content || 'No content';
 
-                        worryItem.innerHTML = `
+                const worryItem = document.createElement('div');
+                worryItem.classList.add('box');
+
+                worryItem.innerHTML = `
                             <h2 class="subtitle">${worry.title}</h2>
                             <p>${worry.author} | 조회수: ${worry.views}</p>
-                        `;
-                        worriesList.appendChild(worryItem);
-                    });
-
-                    if (data.has_more) {
-                        page += 1;
-                        isLoading = false;
-                    } else {
-                        document.getElementById('loading-spinner').style.display = 'none';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading worries:', error);
-                    isLoading = false;
-                    document.getElementById('loading-spinner').style.display = 'none';
-                });
+                `;
+                worriesList.appendChild(worryItem);
+            }
+            index += itemsPerPage;
+            isLoading = false;
+            if (index >= allWorries.length) {
+                document.getElementById('loading-spinner').style.display = 'none';
+            }
         }
 
-        // Infinite scroll implementation
+        fetch(`/api/worries`)
+            .then(response => response.json())
+            .then(data => {
+                allWorries = data.worries_sorted_by_date;
+                loadWorries();  // 초기 고민글 로드
+            })
+            .catch(error => {
+                console.error('Error loading worries:', error);
+            });
+
         window.addEventListener('scroll', () => {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
                 loadWorries();
             }
         });
-
-        // Initial load
-        loadWorries();
     });
 </script>
 {% endblock %}

@@ -122,5 +122,41 @@ def get_user_info():
     }), 200
     
 
-# @user_bp.route('/api/user/set-pw', methods=["POST"])
+@user_bp.route('/api/user/pw', methods=["POST"])
+def update_password():
+    token = get_token_from_header()
+    
+    if not token:
+        return jsonify({ "message": "Token is missing" }), 403
+    
+    data=request.get_json()
+    old_pw = data.get('old_pw')
+    new_pw=data.get('new_pw')
+    
+    user_dict, error = decode_access_token(token)
+    if error:
+        return jsonify({ "message": error }), 403
+    
+    filter = {"user_id": user_dict["user_id"]}
+    user = db[COLLECTION_NAME].find_one(filter)
+    if old_pw != user["password"]:
+        return jsonify({
+            "message": "이전 비번을 다시 확인해주세요"
+        }), 400
 
+    try:
+        new_user = {"$set": {"password": new_pw}}
+        db[COLLECTION_NAME].update_one(filter, new_user)
+
+        return jsonify({
+            "message": "비번 변경을 완료했어요"
+        }), 200
+        
+    except:
+        return jsonify({
+            "message": "잠시 후 다시 시도해주세요"
+        }), 500
+    
+    
+
+    

@@ -5,7 +5,7 @@ rendering_bp = Blueprint('rendering_bp', __name__)
 
 @rendering_bp.route('/signup')
 def signup():
-    return render_template('signup.html')
+    return render_template('signUp.html')
 
 @rendering_bp.route('/signin')
 def signin():

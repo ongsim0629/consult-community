@@ -4,24 +4,69 @@
 
 {% block content %}
 <h1 class="title has-text-black">고민 解憂所</h1>
-<form id="loginForm">
+<form id="loginForm" onsubmit="login(event)">
     <div class="field">
         <label class="label has-text-black">ID</label>
         <div class="control">
-            <input class="input" type="email" placeholder="이메일을 입력하세요" required>
+            <input class="input" type="text" id="user_id" placeholder="아이디를 입력하세요" required>
         </div>
     </div>
     <div class="field">
         <label class="label has-text-black">비밀번호</label>
         <div class="control">
-            <input class="input" type="password" placeholder="비밀번호를 입력하세요" required>
+            <input class="input" type="password" id="password" placeholder="비밀번호를 입력하세요" required>
         </div>
     </div>
     <div class="field">
         <div class="control">
-            <button type="submit" class="button is-primary">로그인</button>
-            <button type="submit" class="button is-primary">회원 가입</button>
+            <button type="button" class="button is-primary" onclick="login(event)">로그인</button>
+            <button type="button" class="button is-primary" onclick="register()">회원 가입</button>
         </div>
     </div>
 </form>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+<script>
+    function login(event) {
+        event.preventDefault();
+
+        const client_id = $('#user_id').val();
+        const client_password = $('#password').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/user/sign-in',
+            contentType: 'application/json',
+            data: JSON.stringify({ 'user_id': client_id, 'password': client_password }),
+
+            success: function (response, textStatus, jqXHR) {
+                if (jqXHR.status === 200) {
+                    let token = response['access_token'];
+                    sessionStorage.setItem('access_token', token);
+                    alert('로그인 성공');
+                    // 로그인 성공 후 /mypage로 리디렉션 일단 클라이언트에서 이동하는 것으로 (api: post -> SSR) 잘 모르겠어서
+                    const baseUrl = window.location.origin;
+                    window.location.href = baseUrl + '/mypage';
+                } else {
+                    alert('로그인 실패');
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 400) {
+                    alert('잘못된 요청: ' + jqXHR.responseJSON.message);
+                } else if (jqXHR.status === 404) {
+                    alert('존재하지 않는 유저입니다.');
+                } else {
+                    alert('오류가 발생했습니다.');
+                }
+            }
+        });
+    }
+
+    function register() {
+        const baseUrl = window.location.origin;
+        window.location.href = baseUrl + '/signup';
+    }
+</script>
 {% endblock %}
