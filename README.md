@@ -25,5 +25,5 @@
 2. BE : 효범님, 선미님
 
 ## Framework, Stack
-1. FE : VanillaJS, (Bulma, Tailwind 중 택1), SSR
+1. FE : VanillaJS, Bulma, SSR
 2. BE : Jinja2, JWT
