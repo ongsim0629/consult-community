@@ -11,6 +11,7 @@ load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
 MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
 SECRET_KEY = os.environ.get("SECRET_KEY")
+# TODO: COLLECTION_NAME 분리하기
 
 user_bp = Blueprint('user_bp', __name__)
 client = MongoClient(MONGO_DB_URI)
@@ -29,7 +30,50 @@ def create_access_token(identity):
 # 회원가입
 @user_bp.route('/api/user/sign-up', methods=["POST"])
 def todo():  
-    return {}
+    data=request.get_json()
+    user_id = data.get('user_id')
+    user_pw=data.get('password')
+    nickname=data.get('nickname')
+    
+    # 1. client 요청 유효성 체크
+    if not user_id:
+        return jsonify({
+            "message": "user_id를 입력해주세요"
+        }), 400
+
+    elif not user_pw:
+        return jsonify({
+            "message": "pw를 입력해주세요"
+        }), 400
+    
+    elif not nickname:
+        return jsonify({
+            "messsage": "nickname을 입력해주세요"
+        }), 400
+    
+    # 2. 중복 유저 체크
+    user_by_id = db.users.find_one({"user_id": user_id})
+    if user_by_id:
+        return jsonify({
+            "message": "중복된 아이디 입니다."
+        }), 409
+        
+    user_by_nickname = db.users.find_one({"nickname": nickname})
+    if user_by_nickname:
+        return jsonify({
+            "message": "중복된 닉네임 입니다."
+        }), 409
+
+    # 3. 비로소 생성 완료
+    user = db.users.insert_one({
+        "user_id": user_id,
+        "password": user_pw,
+        "nickname": nickname
+    })
+    
+    return jsonify({
+        "message": "생성 완료되었습니다."
+    }), 201
 
 
 # 로그인
