@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,jsonify
 from apps.concern import concern_bp
 from apps.user import user_bp
 from apps.rendering_test import rendering_bp
