@@ -23,7 +23,27 @@ def strToBool(s):
 @concern_bp.route('/concern/concernList', methods=['GET'])
 def getConcernList():
 
-    # topList = db.concerns.find({}).sort('view_count', pymongo.ASCENDING).limit(5)
+    topList = list(db.concerns.find({}).sort('view_count', -1).limit(5))
+
+    concernList = list(db.concerns.find({}))
+   
+    for i in topList:
+        i['_id'] = str(i['_id'])
+    
+    for i in concernList:
+        i['_id'] = str(i['_id'])
+
+    return render_template(
+        'concernList.html',
+        topList = topList,
+        concernList = concernList
+    )
+    ## 무한 스크롤(페이징) 고민
+
+## concernList 화면 렌더링 테스트용
+@concern_bp.route('/concern/concernList/test', methods=['GET'])
+def getConcernListTest():
+
     topList = list(db.concerns.find({}).sort('view_count', -1).limit(5))
 
     concernList = list(db.concerns.find({}))
