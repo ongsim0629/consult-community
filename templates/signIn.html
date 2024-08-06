@@ -43,7 +43,6 @@
             data: JSON.stringify({ 'user_id': client_id, 'password': client_password }),
 
             success: function (response, textStatus, jqXHR) {
-                console.log(response);
                 if (jqXHR.status === 200) {
                     let token = response['access_token'];
                     sessionStorage.setItem('access_token', token);
