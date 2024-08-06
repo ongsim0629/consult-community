@@ -29,7 +29,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.js"
-    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -45,10 +45,10 @@
                 success: function (response) {
                     if (response["result"] == "success") {
                         let lists = response["lists"];
-                        for(let i = 0; i < lists.length; i++) {
+                        for (let i = 0; i < lists.length; i++) {
                             makeList(lists[i]["_id"], lists[i]["text"], lists[i]["status"]);
                         }
-                    } 
+                    }
                 }
             })
         }
@@ -61,7 +61,7 @@
 
             let normalStatus = "";
             let modifyStatus = "";
-            if(status == "undone") {
+            if (status == "undone") {
                 normalStatus = "display:flex";
                 modifyStatus = "display:none !important;";
             } else {
@@ -101,7 +101,7 @@
                 $.ajax({
                     type: "POST",
                     url: "/todo",
-                    data: {'text_request': text, 'status_request': "undone"},
+                    data: { 'text_request': text, 'status_request': "undone" },
                     success: function (response) {
                         if (response["result"] == "success") {
                             alert("등록 완료!");
@@ -150,7 +150,7 @@
             $.ajax({
                 type: 'POST',
                 url: '/todo/delete',
-                data: {'id_give': id_give},
+                data: { 'id_give': id_give },
                 success: function (response) {
                     if (response['result'] == 'success') {
                         let msg = response['msg'];
@@ -178,11 +178,11 @@
         function updateText(t, event) {
             let id_give = t.parent().parent().attr('id').split("-")[1];
             let text_give = t.prev().val();
-            if(text_give != "") {
+            if (text_give != "") {
                 $.ajax({
                     type: 'POST',
                     url: '/todo/updateText',
-                    data: {'id_give': id_give, 'text_give': text_give},
+                    data: { 'id_give': id_give, 'text_give': text_give },
                     success: function (response) {
                         if (response['result'] == 'success') {
                             let msg = response['msg'];
@@ -214,7 +214,7 @@
             $.ajax({
                 type: 'POST',
                 url: '/todo/updateStatus',
-                data: {'id_give': id_give, 'status_give': status_give},
+                data: { 'id_give': id_give, 'status_give': status_give },
                 success: function (response) {
                     if (response['result'] == 'success') {
                         let msg = response['msg'];

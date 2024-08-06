@@ -8,14 +8,14 @@
         <h1 class="title has-text-black">TOP 5</h1>
         <div id="top-5-posts">
             {% for post in topList %}
-                <!-- 여기 사이에 박스 집어넣어서 5번 반복 -->
+            <!-- 여기 사이에 박스 집어넣어서 5번 반복 -->
             <div class="box" onclick="location.href='/concern/detail?concern_id={{ post._id }}'">
                 <article class="media">
                     <div class="media-content">
                         <div class="content">
                             <p class="has-text-black">
-                                <h2 class="subtitle">{{ post.title }}</h2>
-                                <p>{{ post.created_by }} | 조회수: {{ post.view_count }}</p>
+                            <h2 class="subtitle">{{ post.title }}</h2>
+                            <p>{{ post.created_by }} | 조회수: {{ post.view_count }}</p>
                             </p>
                         </div>
                     </div>
@@ -25,36 +25,35 @@
         </div>
     </div>
 
-<section class="section">
-    <div style="display: flex; align-items: center; justify-content: space-between;">
-        <h1 class="title has-text-black" style="margin-right: 10px;">전체 고민들</h1>
-        <button type="button" class="button is-primary"
-        onclick="location.href='/concern/add'">고민 생성</button>
+    <section class="section">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h1 class="title has-text-black" style="margin-right: 10px;">전체 고민들</h1>
+            <button type="button" class="button is-primary" onclick="location.href='/concern/add'">고민 생성</button>
 
-    </div>
-    
-    <div id="worries-list">
-        {% for post in concernList %}
-        <div class="box" onclick="location.href='/concern/detail?concern_id={{ post._id }}'">
-            <article class="media">
-                <div class="media-content">
-                    <div class="content">
-                        <p class="has-text-black">
+        </div>
+
+        <div id="worries-list">
+            {% for post in concernList %}
+            <div class="box" onclick="location.href='/concern/detail?concern_id={{ post._id }}'">
+                <article class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <p class="has-text-black">
                             <h2 class="subtitle">{{ post.title }}</h2>
                             <p>{{ post.created_by }} | 조회수: {{ post.view_count }}</p>
-                        </p>
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </article>
+                </article>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <!-- 로딩 스피너 -->
-    <div id="loading-spinner" class="has-text-centered" style="display: none;">
-        <button class="button is-loading is-primary is-outlined">Loading</button>
-    </div>
-</section>
+        <!-- 로딩 스피너 -->
+        <div id="loading-spinner" class="has-text-centered" style="display: none;">
+            <button class="button is-loading is-primary is-outlined">Loading</button>
+        </div>
+    </section>
 </div>
 
 <!--<script>
