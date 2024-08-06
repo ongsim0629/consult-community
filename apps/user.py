@@ -28,7 +28,7 @@ def create_access_token(identity):
 
 # 회원가입
 @user_bp.route('/api/user/sign-up', methods=["POST"])
-def todo():  
+def signup():  
     data=request.get_json()
     user_id = data.get('user_id')
     user_pw=data.get('password')
