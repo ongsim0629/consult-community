@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>간단한 할 일 목록</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-warning {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">할 일 목록</h2>
+        <!-- 할 일 추가 폼 -->
+        <form class="form-inline mb-4">
+            <input id="todo-val" type="text" class="form-control mr-2 w-50" placeholder="새 할 일">
+            <button type="button" class="btn btn-primary" onclick="makeTodo()">할 일 추가</button>
+        </form>
+
+        <!-- 할 일 목록 -->
+        <ul id="todo-list" class="list-group">
+            <!-- 추가 할 일이 여기에 추가됩니다 -->
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            showList();
+        });
+        // 리스트 조회
+        function showList() {
+            $("#todo-list").html("");
+            $.ajax({
+                type: "GET",
+                url: "/todo",
+                data: {},
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        let lists = response["lists"];
+                        for(let i = 0; i < lists.length; i++) {
+                            makeList(lists[i]["_id"], lists[i]["text"], lists[i]["status"]);
+                        }
+                    } 
+                }
+            })
+        }
+
+        //리스트 html 생성
+        function makeList(id, text, status) {
+            let normalId = "n-" + id;
+            let doneId = "d-" + id;
+            let modifyId = "m-" + id;
+
+            let normalStatus = "";
+            let modifyStatus = "";
+            if(status == "undone") {
+                normalStatus = "display:flex";
+                modifyStatus = "display:none !important;";
+            } else {
+                normalStatus = "display:none !important;";
+                modifyStatus = "display:flex";
+            }
+
+            let temp_html = `<li id="${normalId}" class="list-group-item d-flex justify-content-between align-items-center ${id}" style="${normalStatus}">
+                                <span>${text}</span>
+                                <span>
+                                    <button class="btn btn-success btn-sm mr-1" onclick="completeTodo($(this))">완료</button>
+                                    <button class="btn btn-secondary btn-sm mr-1" onclick="editTodo($(this))">수정</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteTodo($(this))">삭제</button>
+                                </span>
+                            </li>
+                            <li id="${doneId}" class="list-group-item d-flex justify-content-between align-items-center ${id}" style="${modifyStatus}">
+                                <del>${text}</del>
+                                <span>
+                                    <button class="btn btn-info btn-sm mr-1" onclick="incompleteTodo($(this))">완료 취소</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteTodo($(this))">삭제</button>
+                                </span>
+                            </li>
+                            <li id="${modifyId}" class="list-group-item d-flex justify-content-between align-items-center ${id}" style="display:none !important;">
+                                <form class="form-inline w-75">
+                                    <input type="text" class="form-control mr-2 w-75" value="">
+                                    <button type="submit" class="btn btn-secondary btn-sm mr-1" onclick="updateText($(this), event)">업데이트</button>
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="cancelEditTodo($(this))">취소</button>
+                                </form>
+                            </li>`;
+            $("#todo-list").append(temp_html);
+        }
+
+        // 할 일 추가 버튼 클릭시
+        function makeTodo() {
+            let text = $("#todo-val").val();
+            if (text != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/todo",
+                    data: {'text_request': text, 'status_request': "undone"},
+                    success: function (response) {
+                        if (response["result"] == "success") {
+                            alert("등록 완료!");
+
+                            showList();
+                            $("#todo-val").val("");
+                        } else {
+                            alert("서버 오류!");
+                        }
+                    }
+                })
+            } else {
+                alert("할 일을 입력해주세요!");
+            }
+        }
+
+        // 완료 버튼 클릭시
+        function completeTodo(t) {
+            let id = t.parent().parent().attr('id').split("-")[1];
+
+            let normal = $("#n-" + id);
+            let done = $("#d-" + id);
+
+            updateStatus(id, "done");
+
+            done.children(":first").text(normal.children(":first").text());
+            normal.attr("style", "display:none !important");
+            done.attr("style", "display:flex");
+        }
+
+        // 수정 버튼 클릭시
+        function editTodo(t) {
+            let id = t.parent().parent().attr('id').split("-")[1];
+
+            let normal = $("#n-" + id);
+            let modify = $("#m-" + id);
+
+            modify.find(".form-control").val(normal.children(":first").text());
+            normal.attr("style", "display:none !important");
+            modify.attr("style", "display:flex");
+        }
+
+        // 삭제 버튼 클릭시
+        function deleteTodo(t) {
+            let id_give = t.parent().parent().attr('id').split("-")[1];
+            $.ajax({
+                type: 'POST',
+                url: '/todo/delete',
+                data: {'id_give': id_give},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let msg = response['msg'];
+                        alert(msg);
+                        showList();
+                    }
+                }
+            });
+        }
+
+        // 완료 취소 버튼 클릭시
+        function incompleteTodo(t) {
+            let id = t.parent().parent().attr('id').split("-")[1];
+
+            let normal = $("#n-" + id);
+            let done = $("#d-" + id);
+
+            updateStatus(id, "undone");
+
+            normal.attr("style", "display:flex");
+            done.attr("style", "display:none !important");
+        }
+
+        // 업데이트 버튼 클릭 시
+        function updateText(t, event) {
+            let id_give = t.parent().parent().attr('id').split("-")[1];
+            let text_give = t.prev().val();
+            if(text_give != "") {
+                $.ajax({
+                    type: 'POST',
+                    url: '/todo/updateText',
+                    data: {'id_give': id_give, 'text_give': text_give},
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            let msg = response['msg'];
+                            alert(msg);
+                        }
+                    }
+                });
+            } else {
+                event.preventDefault();
+                alert("할 일을 입력해주세요!");
+            }
+        }
+
+        //취소 버튼 클릭 시
+        function cancelEditTodo(t) {
+            let id = t.parent().parent().attr('id').split("-")[1];
+
+            let normal = $("#n-" + id);
+            let modify = $("#m-" + id);
+
+            normal.attr("style", "display:flex");
+            modify.attr("style", "display:none !important");
+        }
+
+        // 상태 업데이트
+        function updateStatus(id, status) {
+            let id_give = id;
+            let status_give = status;
+            $.ajax({
+                type: 'POST',
+                url: '/todo/updateStatus',
+                data: {'id_give': id_give, 'status_give': status_give},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let msg = response['msg'];
+                        alert(msg);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
