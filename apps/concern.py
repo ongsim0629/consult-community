@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, render_template, request
 from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
+from datetime import datetime
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -13,64 +14,104 @@ concern_bp = Blueprint('concern_bp', __name__)
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
-## HTML을 주는 부분
-@concern_bp.route('/')
-def home():
-   return render_template('index.html')
+now = datetime.now()
 
-## todo 전체조회
-@concern_bp.route('/todo', methods=['GET'])
-def todo():
-    result = list(db.todos.find({}))
+def strToBool(s):
+    return s == 'true'
+
+## concernList 화면 렌더링
+@concern_bp.route('/concern/concernList', methods=['GET'])
+def getConcernList():
+
+    # topList = db.concerns.find({}).sort('view_count', pymongo.ASCENDING).limit(5)
+    topList = list(db.concerns.find({}).sort('view_count', -1).limit(5))
+
+    concernList = list(db.concerns.find({}))
    
-    for i in result:
+    for i in topList:
+        i['_id'] = str(i['_id'])
+    
+    for i in concernList:
         i['_id'] = str(i['_id'])
 
-    if len(result) > 0 :
-        return jsonify({'result':'success', 'lists':result, 'msg':'GET 성공!'})
-    else :
-        return jsonify({'result':'fail', 'msg':'결과 없음'})
+    return jsonify({'result':'success', 'topList':topList, 'concernList':concernList, 'msg':'getConcernList 성공!'})
+    ## TODO : 위에꺼 없애고 concernList 화면 랜더링
+    ## 무한 스크롤(페이징) 고민
 
-## todo 입력
-@concern_bp.route('/todo', methods=['POST'])
-def save():
-    text_request = request.form['text_request']
-    status_request = request.form['status_request']
-    todo = {
-        'text': text_request,
-        'status': status_request
+## addConcern 화면 렌더링
+@concern_bp.route('/concern/add', methods=['GET'])
+def addConcernForm():
+
+    return jsonify({'result':'success', 'msg':'addConcernForm 성공!'})
+    ## TODO : 위에꺼 없애고 addConcern 화면 랜더링
+
+## addConcern에서 고민 추가
+@concern_bp.route('/concern/add', methods=['POST'])
+def addConcern():
+    formData = request.form
+    print(formData)
+    concernData = {
+        'title':formData['title'],
+        'content':formData['content'],
+        'revealed':strToBool(formData['revealed']),
+        'view_count':0,
+        'created_at':now,
+        'created_by':"닉네임TEST1",
+        'updated_at':now
     }
+    print(concernData)
 
-    db.todos.insert_one(todo)
-    return jsonify({'result': 'success', 'msg':'POST 성공!'})
+    db.concerns.insert_one(concernData)
+    return jsonify({'result': 'success', 'msg':'addConcern 성공!'})
+    ## TODO : 위에꺼 없애고 만들어진 고민으로 리다이렉트
+        ## : JWT에서 닉네임 받기
+        ## : revealed 저장하는 방식 생각해보기
+        ## : 날짜 저장하는 방식 생각해보기
 
-## 상태 업데이트
-@concern_bp.route('/todo/updateStatus', methods=['POST'])
-def updateStatus():
-    id_request = request.form['id_give']
-    status_request = request.form['status_give']
-    msg_response = ''
-    if status_request == 'done':
-        msg_response = '할 일 체크 완료!'
-    else :
-        msg_response = '할 일 완료 취소!'
-    db.todos.update_one({"_id" : ObjectId(id_request)}, {'$set' : {"status" : status_request}})
+## concernDetail 화면 렌더링
+@concern_bp.route('/concern/detail', methods=['GET'])
+def getConcernDetail():
+    ## 쿼리스트링에서 고민 id 받기
+    concernId = request.args.get('concern_id')
+    concern = db.concerns.find_one({"_id" : concernId})
+    solutions = db.concerns.find({'concern_id' : concernId})
 
-    return jsonify({'result': 'success', 'msg': msg_response})
+    return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
+    ## TODO : 위에꺼 없애고 concernDetail 화면 랜더링
 
-## text 업데이트
-@concern_bp.route('/todo/updateText', methods=['POST'])
-def updateText():
-    id_request = request.form['id_give']
-    text_request = request.form['text_give']
+## solution 생성 (API)
+@concern_bp.route('/concern/solution', methods=['POST'])
+def addSolution():
+    formData = request.form
+    print(formData)
+    solutionData = {
+        'content':formData['content'],
+        'revealed':strToBool(formData['revealed']),
+        'concern_id':formData['concern_id'],
+        'concerned_by':formData['concerned_by'],
+        'created_at':now,
+        'created_by':"고민해결자 TEST1",
+        'updated_at':now
+    }
+    db.solutions.insert_one(solutionData)
+    return jsonify({'result':'success', 'msg':'addSolution 성공!'})
 
-    db.todos.update_one({"_id" : ObjectId(id_request)}, {'$set' : {"text" : text_request}})
+## solution 삭제 (API)
+@concern_bp.route('/concern/solution/<concern_id>', methods=['DELETE'])
+def deleteSolution(concern_id):
+    db.todos.delete_one({"_id" : ObjectId(concern_id)})
+    return jsonify({'result': 'success', 'msg': 'deleteSolution 완료!'})
 
-    return jsonify({'result': 'success', 'msg': '할 일 업데이트 완료!'})
+# ## updateConcern 렌더링
+# @concern_bp.route('/concern/update', methods=['GET']) ## 파라미터 넣는법 찾아볼것
+# def updateConcernForm():
 
-## todo 삭제
-@concern_bp.route('/todo/delete', methods=['POST'])
-def delete():
-    id_request = request.form['id_give']
-    db.todos.delete_one({"_id" : ObjectId(id_request)})
-    return jsonify({'result': 'success', 'msg': '할 일 삭제 완료!'})
+# ## Concern 업데이트 (API)
+# @concern_bp.route('/concern/update', methods=['POST']) ## 파라미터 넣는법 찾아볼것
+# def updateConcern():
+
+# ## Concern 삭제 (API)
+# @concern_bp.route('/concern/delete', methods=['DELETE']) ## 파라미터 넣는법 찾아볼것
+# def deleteConcern():
+
+
