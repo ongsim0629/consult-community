@@ -44,5 +44,5 @@ $ .venv\Scripts\activate
 
 ## Framework, Stack
 
-1. FE : VanillaJS, (Bulma, Tailwind 중 택1), SSR
+1. FE : VanillaJS, Bluma, SSR
 2. BE : Jinja2, JWT
