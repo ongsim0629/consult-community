@@ -3,13 +3,11 @@ from flask import Blueprint, jsonify, request
 from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
-import datetime
-import jwt
+from .auth import UserObject, create_access_token, decode_access_token, get_token_from_header
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
 MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
-SECRET_KEY = os.environ.get("SECRET_KEY")
 COLLECTION_NAME = 'users'
 
 user_bp = Blueprint('user_bp', __name__)
@@ -17,48 +15,6 @@ user_bp = Blueprint('user_bp', __name__)
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
-class UserObject:
-    def __init__(self, user_id, nickname):
-        self.user_id = user_id
-        self.nickname = nickname
-        
-    def to_dict(self):
-        """Convert UserObject to a dictionary."""
-        return {
-            'user_id': self.user_id,
-            'nickname': self.nickname
-        }
-
-def create_access_token(user_obj):
-    """Create JWT access token"""
-    expiration = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
-
-    token = jwt.encode({
-        **user_obj.to_dict(),
-        'exp': expiration
-    }, SECRET_KEY, algorithm='HS256')
-    return token
-
-
-def decode_access_token(token):
-    """Decode JWT access token"""
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        user_dict = UserObject(payload['user_id'], payload['nickname']).to_dict()
-        return user_dict, None
-    except jwt.ExpiredSignatureError:
-        return None, 'Token has expired'
-    except jwt.InvalidTokenError:
-        return None, 'Invalid token'
-
-
-def get_token_from_header():
-    """Extracts the token from the Authorization header"""
-    auth_header = request.headers.get('Authorization')
-    if auth_header and auth_header.startswith('Bearer '):
-        token = auth_header.split(' ')[1]
-        return token
-    return None
 
 # 회원가입
 @user_bp.route('/api/user/sign-up', methods=["POST"])
@@ -143,6 +99,8 @@ def signin():
 
 @user_bp.route('/api/user/info', methods=["GET"])
 def get_user_info():
+    
+    ## ===== TODO: (시작) 분리 고민 필요 =====
     token = get_token_from_header()
     
     if not token:
@@ -153,6 +111,8 @@ def get_user_info():
     if error:
         return({ "message": error }), 403
     
+    ## ===== TODO: (끝) 분리 고민 필요 =====
+
     user_id = user_dict['user_id']
     nickname = user_dict['nickname']
     
