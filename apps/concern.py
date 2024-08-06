@@ -1,11 +1,17 @@
+import os
 from flask import Blueprint, jsonify, render_template, request
+from dotenv import load_dotenv
+from bson import ObjectId
+from pymongo import MongoClient
+
+load_dotenv()
+MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
+MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
 
 concern_bp = Blueprint('concern_bp', __name__)
 
-from bson import ObjectId
-from pymongo import MongoClient
-client = MongoClient('') ## 몽고디비 링크를 해당 괄호안에 넣는다.
-db = client.dbpractice
+client = MongoClient(MONGO_DB_URI)
+db = client[MONGO_DB_NAME]
 
 ## HTML을 주는 부분
 @concern_bp.route('/')
