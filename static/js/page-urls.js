@@ -2,7 +2,7 @@
 
 const PAGE_URLS = {
     HOME: '/concern/conernList',
-    SIGN_IN: '/',
+    SIGN_IN: '/signin',
     SIGN_UP: '/signup',
     CONCERN_LIST: '/concerns',
     CONCERN_ADD: '/concern/add',
