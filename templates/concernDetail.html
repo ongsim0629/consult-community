@@ -43,11 +43,11 @@
                 <div class="field">
                     <div class="control">
                         <label class="radio">
-                            <input type="radio" name="revealed" value="false" checked>
+                            <input type="radio" name="revealed" value="true" checked>
                             공개
                         </label>
                         <label class="radio">
-                            <input type="radio" name="revealed" value="true">
+                            <input type="radio" name="revealed" value="false">
                             비공개
                         </label>
                     </div>
@@ -55,7 +55,7 @@
             </div>
             <div style="display: flex; align-items: center;">
                 <div class="control" style="flex-grow: 1; margin-right: 10px;">
-                    <input class="input" type="text" placeholder="댓글 내용을 입력하세요" style="width: 100%;">
+                    <input class="input" type="text" name="content" placeholder="댓글 내용을 입력하세요" style="width: 100%;">
                 </div>
                 <div class="control">
                     <button type="button" class="button is-primary" onclick="addSolution()">댓글 추가</button>
@@ -96,26 +96,77 @@
     crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 <script>
-    let token
-    document.addEventListener('DOMContentLoaded', function () {
 
-        token = sessionStorage.getItem('access_token');
-    })
-
+    // 댓글 추가 기능
     function addSolution() {
-        let form = $(".solution-form").serialize();
+        const token = sessionStorage.getItem('access_token');
+        const decodedToken = jwt_decode(token);
+        const userId = decodedToken.user_id;
+
+        const form = document.getElementById("solution-form"); // 오타 수정
+        const formData = new FormData(form);
+
+        // content 필드 값 가져오기
+        const content = formData.get("content");
+
+        // content 필드가 비어 있으면 경고 메시지 표시
+        if (!content || content.trim() === "") {
+            alert("내용을 입력해주세요.");
+            return;
+        }
+
+        // formData에 각각 값 추가
+        formData.append("concern_id", "{{ concern._id }}");
+        formData.append("user_id", userId);
+        formData.append("concerned_by", "{{ concern.created_by }}");
+
         $.ajax({
             type: "POST",
             url: "/concern/solution",
-            data: { 'form': form, 'token': token },
+            data: formData,
+            processData: false,  // jQuery가 데이터를 문자열로 변환하지 않도록 설정
+            contentType: false,  // jQuery가 콘텐츠 타입을 설정하지 않도록 설정
             success: function (response) {
-                if (response["result"] == "success") {
+                if (response.result == "success") {
                     alert("등록 완료!");
+                    location.reload();
                 } else {
                     alert("서버 오류!");
                 }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: " + error);
+                alert("서버 오류! 다시 시도해주세요.");
             }
-        })
+        });
+    }
+
+    function deleteSolution(solutionId) {
+        const token = sessionStorage.getItem('access_token');
+        const decodedToken = jwt_decode(token);
+        const userId = decodedToken.user_id;
+
+        $.ajax({
+            type: "DELETE",
+            url: `/concern/solution/${solutionId}`,
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({
+                user_id: userId
+            }),
+            success: function (response) {
+                if (response.result == "success") {
+                    alert("삭제 완료!");
+                    location.reload();
+                } else {
+                    alert("서버 오류!");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: " + error);
+                alert("서버 오류! 다시 시도해주세요.");
+            }
+        });
     }
 </script>
 

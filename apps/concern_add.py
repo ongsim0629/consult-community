@@ -39,20 +39,7 @@ def addConcernForm():
 def addConcern():
     formData = request.form
     print(formData)
-    ## ===== TODO: (시작) 분리 고민 필요 =====
-    token = formData["token"]
-    print(token)
 
-    if not token:
-        return ({"message": "Token is missing"}), 403
-
-    user_dict, error = decode_access_token(token)
-
-    if error:
-        return ({"message": error}), 403
-
-    ## ===== TODO: (끝) 분리 고민 필요 =====
-    nickname = user_dict["nickname"]
 
     concernData = {
         "title": formData["title"],
@@ -60,7 +47,7 @@ def addConcern():
         "revealed": strToBool(formData["revealed"]),
         "view_count": 0,
         "created_at": now,
-        "created_by": nickname,  # 토큰에서 값 가져온다.
+        "created_by": formData["user_id"],
         "updated_at": now,
     }
     insertData = db.concerns.insert_one(concernData)
