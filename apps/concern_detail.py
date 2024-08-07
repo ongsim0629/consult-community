@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from datetime import datetime
 from constants.python.page_urls import PAGE_URLS
 
+
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
 MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME")
@@ -31,9 +32,16 @@ def getConcernDetail():
     concern["_id"] = str(
         concern["_id"]
     )  # ObjectId는 Json 안에 담을 수 없다. String으로 바꿔줄 것
+
+    nickname_concern_creator = concern["created_by"]
     solutions = list(db.concerns.find({"concern_id": concernId}))
 
-    return render_template("concernDetail.html", concern=concern, solutions=solutions)
+    return render_template(
+        "concernDetail.html",
+        concern=concern,
+        solutions=solutions,
+        nickname_concern_creator=nickname_concern_creator,
+    )
 
     # return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
 
