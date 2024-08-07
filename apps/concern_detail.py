@@ -38,6 +38,8 @@ def getConcernDetail():
 
     nickname_concern_creator = concern["created_by"]
 
+    solutions = list(db.concerns.find({"concern_id": concernId}))
+
     # revealed가 "false"이면 alias를 "익명스님"으로 설정 -> 지금 db에 불린 false랑 string flase 혼재 중 -> 수정
     alias = "익명스님" if concern.get("revealed") is False else None
 
@@ -52,24 +54,34 @@ def getConcernDetail():
     return render_template(
         "concernDetail.html",
         concern=concern,
+        solutions=solutions,
         alias=alias,
         nickname_concern_creator=nickname_concern_creator,
     )
-
 
 ## solution 조회 (API)
 @concern_detail_bp.route("/concern/solution", methods=["GET"])
 def getSolution():
     concernId = request.args.get("concernId")
+
     solutions = list(
         db.solutions.find({"concern_id": concernId}).sort({"created_at": -1})
     )
+
     for i in solutions:
         i["_id"] = str(i["_id"])
         i["created_at"] = formatDateTimeToStr(i["created_at"])
 
+    concern = db.concerns.find_one({"_id": ObjectId(concernId)})
+    concernNickname = concern["created_by"]
+
     return jsonify(
-        {"result": "success", "solutions": solutions, "msg": "getSolution 성공!"}
+        {
+            "result": "success",
+            "solutions": solutions,
+            "concernNickname": concernNickname,
+            "msg": "getSolution 성공!",
+        }
     )
 
 
