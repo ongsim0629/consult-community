@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
+from constants.python.page_urls import PAGE_URLS
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -22,7 +23,7 @@ def strToBool(s):
 
 
 ## concernList 화면 렌더링
-@concern_bp.route("/concern/concernList", methods=["GET"])
+@concern_bp.route(PAGE_URLS["HOME"], methods=["GET"])
 def getConcernList():
 
     topList = list(db.concerns.find({}).sort("view_count", -1).limit(5))
@@ -40,7 +41,7 @@ def getConcernList():
 
 
 ## concernList 화면 렌더링 테스트용
-@concern_bp.route("/concern/concernList/test", methods=["GET"])
+@concern_bp.route(PAGE_URLS["HOME"] + "/test", methods=["GET"])
 def getConcernListTest():
 
     topList = list(db.concerns.find({}).sort("view_count", -1).limit(5))
@@ -88,7 +89,7 @@ def addConcern():
     print(concernData)
 
     db.concerns.insert_one(concernData)
-    return redirect("/concern/concernList")
+    return redirect(PAGE_URLS["HOME"])
     # return jsonify({'result': 'success', 'msg':'addConcern 성공!'})
     ## TODO : 위에꺼 없애고 만들어진 고민으로 리다이렉트
     ## : JWT에서 닉네임 받기
@@ -97,7 +98,7 @@ def addConcern():
 
 
 ## concernDetail 화면 렌더링
-@concern_bp.route("/concern/detail", methods=["GET"])
+@concern_bp.route(PAGE_URLS["CONCERN_DETAIL"], methods=["GET"])
 def getConcernDetail():
     ## 쿼리스트링에서 고민 id 받기
     concernId = request.args.get("concern_id")
@@ -127,7 +128,7 @@ def addSolution():
         "updated_at": now,
     }
     db.solutions.insert_one(solutionData)
-    return redirect("/concern/concernList")
+    return redirect(PAGE_URLS["HOME"])
     # return jsonify({'result':'success', 'msg':'addSolution 성공!'})
 
 
