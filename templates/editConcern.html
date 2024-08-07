@@ -3,22 +3,26 @@
 {% block title %}고민글 수정 - 해우소{% endblock %}
 
 {% block content %}
+<script>
+    window.addEventListener('DOMContentLoaded', checkAuthorizedAccessAndRedirect)
+</script>
 <h1 class="title has-text-black">고민 수정</h1>
-<form id="postForm">
+<form id="postForm" onsubmit="edit_concern(event)">
     <div class="field">
         <label class="label has-text-black">제목</label>
         <div class="control">
-            <input class="input" type="text" placeholder="고민의 제목을 입력하세요" required>
+            <textarea id="new_title" class="input" type="text" placeholder="수정할 제목을 입력하세요"
+                required> {{concern.title}} </textarea>
         </div>
     </div>
     <div class="field">
         <div class="control">
             <label class="radio">
-                <input type="radio" name="answer" checked="checked" />
+                <input type="radio" name="revealed" value="false" {% if not concern.revealed %}checked{% endif %} />
                 익명
             </label>
             <label class="radio">
-                <input type="radio" name="answer" />
+                <input type="radio" name="revealed" value="true" {% if concern.revealed %}checked{% endif %} />
                 실명
             </label>
         </div>
@@ -26,7 +30,8 @@
     <div class="field">
         <label class="label has-text-black">내용</label>
         <div class="control">
-            <textarea class="textarea" placeholder="고민의 내용을 입력하세요" required></textarea>
+            <textarea id="new_content" class="textarea" placeholder="수정할 내용을 입력하세요"
+                required>{{concern.content}}</textarea>
         </div>
     </div>
     <div class="field is-grouped">
@@ -34,8 +39,55 @@
             <button type="submit" class="button is-primary">수정</button>
         </div>
         <div class="control">
-            <button type="button" class="button is-danger" id="deleteButton">삭제</button>
+            <button type="button" class="button is-danger" id="deleteButton" onclick="delete_concern()">삭제</button>
         </div>
     </div>
 </form>
+
+<script>
+    function delete_concern() {
+        const concern_id = '{{concern._id}}';
+
+        $.ajax({
+            url: '/concern/delete',
+            type: 'DELETE',
+            data: JSON.stringify({ concern_id: concern_id }),
+            contentType: 'application/json',
+            success: function (response, textStatus, jqXHR) {
+                alert(jqXHR.responseJSON.message);
+                window.location.href = PAGE_URLS["HOME"];
+            },
+            error: function (response, textStatus, jqXHR) {
+                alert(jqXHR.responseJSON.message);
+            }
+        });
+
+    }
+
+    function edit_concern(event) {
+        event.preventDefault();
+        const concern_id = '{{concern._id}}';
+        const new_title = document.getElementById('new_title').value.trim();
+        const new_content = document.getElementById('new_content').value.trim();
+        const revealed = document.querySelector('input[name="revealed"]:checked').value;
+        const PAGE_DETAIL = `${PAGE_URLS["CONCERN_DETAIL"]}?concern_id=${concern_id}&flag=true`;
+        const baseUrl = window.location.origin;
+
+        $.ajax({
+            url: '/concern/update',
+            type: 'POST',
+            data: JSON.stringify({ new_title: new_title, new_content: new_content, concern_id: concern_id, revealed: revealed }),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (response, textStatus, jqXHR) {
+                alert(response.message);
+                window.location.href = baseUrl + PAGE_DETAIL;
+            },
+            error: function (xhr, status, error) {
+                alert(xhr.responseJSON.message);
+            }
+        });
+    }
+
+</script>
 {% endblock %}

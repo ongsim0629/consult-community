@@ -10,6 +10,7 @@ from .auth import (
     decode_access_token,
     get_token_from_header,
 )
+from constants.python.page_urls import PAGE_URLS
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -28,14 +29,14 @@ def strToBool(s):
 
 
 ## addConcern 화면 렌더링
-@concern_add_bp.route("/concern/add", methods=["GET"])
+@concern_add_bp.route(PAGE_URLS["CONCERN_ADD"], methods=["GET"])
 def addConcernForm():
 
     return render_template("addConcern.html")
 
 
 ## addConcern에서 고민 추가
-@concern_add_bp.route("/concern/add", methods=["POST"])
+@concern_add_bp.route(PAGE_URLS["CONCERN_ADD"], methods=["POST"])
 def addConcern():
     formData = request.form
     print(formData)
@@ -66,3 +67,4 @@ def addConcern():
     insertData = db.concerns.insert_one(concernData)
     concernId = str(insertData.inserted_id)
     return redirect(url_for("concern_detail_bp.getConcernDetail", concern_id=concernId))
+    # TODO : page URL 상수와 연결되어있지 않음

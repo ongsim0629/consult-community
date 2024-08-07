@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script>
+    window.addEventListener('DOMContentLoaded', checkAuthorizedAccessAndRedirect)
+</script>
 <h1 class="title has-text-black">고민 작성</h1>
 <form id="postForm" method="post">
     <div class="field">
