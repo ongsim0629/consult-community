@@ -33,13 +33,16 @@ def getConcernDetail():
     )  # ObjectId는 Json 안에 담을 수 없다. String으로 바꿔줄 것
     solutions = list(db.concerns.find({"concern_id": concernId}))
     
+    # revealed가 "false"이면 alias를 "익명스님"으로 설정 -> 지금 db에 불린 false랑 string flase 혼재 중 -> 수정
+    alias = "익명스님" if concern.get("revealed")  is False else None   
+    
     ## 수정시 조회수 +1 안 하기 위한 쿼리 파라미터
     flag = request.args.get("flag", "false")
     
     if not strToBool(flag):
         db.concerns.update_one({"_id": ObjectId(concernId)}, {'$inc': {"view_count": 1}})
 
-    return render_template("concernDetail.html", concern=concern, solutions=solutions)
+    return render_template("concernDetail.html", concern=concern, solutions=solutions, alias=alias)
 
     # return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
 

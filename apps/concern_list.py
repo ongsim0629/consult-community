@@ -32,9 +32,13 @@ def getConcernList():
 
     for i in topList:
         i["_id"] = str(i["_id"])
+        if i.get("revealed") is False:
+            i["created_by"] = "익명스님"
 
     for i in concernList:
         i["_id"] = str(i["_id"])
+        if i.get("revealed") is False:
+            i["created_by"] = "익명스님"
 
     return render_template("concernList.html", topList=topList, concernList=concernList)
     ## 무한 스크롤(페이징) 고민
