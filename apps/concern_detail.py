@@ -40,18 +40,20 @@ def getConcernDetail():
 ## solution 생성 (API)
 @concern_detail_bp.route("/concern/solution", methods=["POST"])
 def addSolution():
-    formData = request.form
-    print(formData)
-    solutionData = {
-        "content": formData["content"],
-        "revealed": strToBool(formData["revealed"]),
-        "concern_id": formData["concern_id"],
-        "concerned_by": formData["concerned_by"],
-        "created_at": now,
-        "created_by": "고민해결자 TEST1",
-        "updated_at": now,
-    }
-    db.solutions.insert_one(solutionData)
+    print(request)
+    # formData = request.form
+    # # print(formData)
+    # # print(request.token)
+    # solutionData = {
+    #     "content": formData["content"],
+    #     "revealed": strToBool(formData["revealed"]),
+    #     "concern_id": formData["concern_id"],
+    #     "concerned_by": formData["concerned_by"],
+    #     "created_at": now,
+    #     "created_by": "고민해결자 TEST1",
+    #     "updated_at": now,
+    # }
+    # db.solutions.insert_one(solutionData)
     return jsonify({"result": "success", "msg": "addSolution 성공!"})
 
 
