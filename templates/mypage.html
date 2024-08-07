@@ -173,55 +173,6 @@
                 }
             })
 
-
-            let allWorries = [];
-            let index = 0;
-            const itemsPerPage = 10;
-            let isLoading = false;
-
-            function loadWorries() {
-                if (isLoading || index >= allWorries.length) return;
-                isLoading = true;
-                document.getElementById('loading-spinner').style.display = 'block';
-
-                const worriesList = document.getElementById('worries-list');
-                for (let i = index; i < index + itemsPerPage && i < allWorries.length; i++) {
-                    const worry = allWorries[i];
-                    const title = worry.title || 'No title';
-                    const author = worry.author || 'Unknown author';
-                    const content = worry.content || 'No content';
-
-                    const worryItem = document.createElement('div');
-                    worryItem.classList.add('box');
-
-                    worryItem.innerHTML = `
-                            <h2 class="subtitle">${worry.title}</h2>
-                            <p>${worry.author} | 조회수: ${worry.views}</p>
-                `;
-                    worriesList.appendChild(worryItem);
-                }
-                index += itemsPerPage;
-                isLoading = false;
-                if (index >= allWorries.length) {
-                    document.getElementById('loading-spinner').style.display = 'none';
-                }
-            }
-
-            fetch(`/api/worries`)
-                .then(response => response.json())
-                .then(data => {
-                    allWorries = data.worries_sorted_by_date;
-                    loadWorries();  // 초기 고민글 로드
-                })
-                .catch(error => {
-                    console.error('Error loading worries:', error);
-                });
-
-            window.addEventListener('scroll', () => {
-                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
-                    loadWorries();
-                }
-            });
         });
     })
 </script>
