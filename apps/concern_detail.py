@@ -5,7 +5,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
 from constants.python.page_urls import PAGE_URLS
-from .utils import formatDateTimeToStr
+from .utils import formatDateTimeToStr, createNow
 
 
 load_dotenv()
@@ -16,10 +16,6 @@ concern_detail_bp = Blueprint("concern_detail_bp", __name__)
 
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
-
-
-def createNow():
-    return datetime.now()
 
 
 def strToBool(s):
@@ -58,6 +54,7 @@ def getConcernDetail():
         alias=alias,
         nickname_concern_creator=nickname_concern_creator,
     )
+
 
 ## solution 조회 (API)
 @concern_detail_bp.route("/concern/solution", methods=["GET"])

@@ -2,9 +2,9 @@ import os
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from dotenv import load_dotenv
 from pymongo import MongoClient
-from datetime import datetime
 from .auth import decode_access_token
 from constants.python.page_urls import PAGE_URLS
+from .utils import createNow
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -14,10 +14,6 @@ concern_add_bp = Blueprint("concern_add_bp", __name__)
 
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
-
-
-def createNow():
-    return datetime.now()
 
 
 def strToBool(s):
