@@ -57,18 +57,36 @@ def getConcernDetail():
     # return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
 
 
+## solution 조회 (API)
+@concern_detail_bp.route("/concern/solution", methods=["GET"])
+def getSolution():
+    concernId = request.args.get("concernId")
+    print(concernId)
+    solutions = list(
+        db.solutions.find({"concern_id": concernId}).sort("created_at", -1)
+    )
+    print(solutions)
+    for i in solutions:
+        i["_id"] = str(i["_id"])
+
+    return jsonify(
+        {"result": "success", "solutions": solutions, "msg": "getSolution 성공!"}
+    )
+
+
 ## solution 생성 (API)
 @concern_detail_bp.route("/concern/solution", methods=["POST"])
 def addSolution():
     formData = request.form
     print(formData)
+
     solutionData = {
         "content": formData["content"],
         "revealed": strToBool(formData["revealed"]),
         "concern_id": formData["concern_id"],
         "concerned_by": formData["concerned_by"],
         "created_at": now,
-        "created_by": "고민해결자 TEST1",
+        "created_by": formData["user_id"],
         "updated_at": now,
     }
     db.solutions.insert_one(solutionData)
@@ -76,7 +94,7 @@ def addSolution():
 
 
 ## solution 삭제 (API)
-@concern_detail_bp.route("/concern/solution/<concern_id>", methods=["DELETE"])
-def deleteSolution(concern_id):
-    db.todos.delete_one({"_id": ObjectId(concern_id)})
+@concern_detail_bp.route("/concern/solution/<solution_id>", methods=["DELETE"])
+def deleteSolution(solution_id):
+    db.solutions.delete_one({"_id": ObjectId(solution_id)})
     return jsonify({"result": "success", "msg": "deleteSolution 완료!"})

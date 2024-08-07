@@ -33,24 +33,6 @@ def addConcernForm():
 @concern_add_bp.route(PAGE_URLS["CONCERN_ADD"], methods=["POST"])
 def addConcern():
     formData = request.form
-    print(formData)
-    ## ===== TODO: (시작) 분리 고민 필요 =====
-    token = formData["token"]
-
-    if not token:
-        flash("토큰이 없습니다. 로그인해주세요")
-        return redirect(PAGE_URLS["SIGN_IN"])
-
-    # TODO: 토큰 만료 재현
-    # expired_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGVzdGVyMTIzNDUiLCJuaWNrbmFtZSI6InRlc3Rlcl9uaWNrbmFtZTEyMzQ1IiwiZXhwIjoxNzIyOTQ3MDIwfQ.8rFaJnbOpJa-6YEeEVh2LYk0kzXARg7EAD8TNLI3fAE"
-    user_dict, error = decode_access_token(token)
-
-    if error:
-        flash("토큰이 만료되었습니다. 재로그인해주세요")
-        return redirect(PAGE_URLS["SIGN_IN"])
-
-    ## ===== TODO: (끝) 분리 고민 필요 =====
-    nickname = user_dict["nickname"]
 
     concernData = {
         "title": formData["title"],
@@ -58,7 +40,7 @@ def addConcern():
         "revealed": strToBool(formData["revealed"]),
         "view_count": 0,
         "created_at": now,
-        "created_by": nickname,  # 토큰에서 값 가져온다.
+        "created_by": formData["user_id"],
         "updated_at": now,
     }
     insertData = db.concerns.insert_one(concernData)
