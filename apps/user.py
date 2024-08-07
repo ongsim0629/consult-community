@@ -8,7 +8,6 @@ from .auth import (
     decode_access_token,
     get_token_from_header,
 )
-from .auth import decode_access_token
 from constants.python.page_urls import PAGE_URLS
 from flask import Blueprint, render_template, request, redirect, flash
 
