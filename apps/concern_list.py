@@ -9,6 +9,7 @@ from .auth import (
     decode_access_token,
     get_token_from_header,
 )
+from .utils import formatDateTimeToStr
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -37,13 +38,15 @@ def getConcernList():
 
     for i in topList:
         i["_id"] = str(i["_id"])
+        i["created_at"] = formatDateTimeToStr(i["created_at"])
+
         if i.get("revealed") is False:
             i["created_by"] = "익명스님"
-        i["created_at"] = i["created_at"].strftime("%Y년 %m월 %d일 %H시 %M분")
 
     for i in concernList:
         i["_id"] = str(i["_id"])
-        i["created_at"] = i["created_at"].strftime("%Y년 %m월 %d일 %H시 %M분 %S초")
+        i["created_at"] = formatDateTimeToStr(i["created_at"])
+
         if i.get("revealed") is False:
             i["created_by"] = "익명스님"
 
@@ -78,7 +81,7 @@ def get_concerns_by_user():
 
     for i in data:
         i["_id"] = str(i["_id"])
-        i["created_at"] = i["created_at"].strftime("%Y년 %m월 %d일 %H시 %M분 %S초")
+        i["created_at"] = formatDateTimeToStr(i["created_at"])
 
     ## TODO: 무한 스크롤(페이징) 고민
     return jsonify({"data": data}), 200

@@ -5,6 +5,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
 from constants.python.page_urls import PAGE_URLS
+from .utils import formatDateTimeToStr
 
 
 load_dotenv()
@@ -67,7 +68,7 @@ def getSolution():
     print(solutions)
     for i in solutions:
         i["_id"] = str(i["_id"])
-        i["created_at"] = i["created_at"].strftime("%Y년 %m월 %d일 %H시 %M분 %S초")
+        i["created_at"] = formatDateTimeToStr(i["created_at"])
 
     return jsonify(
         {"result": "success", "solutions": solutions, "msg": "getSolution 성공!"}
