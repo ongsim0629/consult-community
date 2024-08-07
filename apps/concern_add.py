@@ -1,15 +1,9 @@
 import os
-from flask import Blueprint, jsonify, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from dotenv import load_dotenv
-from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
-from .auth import (
-    UserObject,
-    create_access_token,
-    decode_access_token,
-    get_token_from_header,
-)
+from .auth import decode_access_token
 from constants.python.page_urls import PAGE_URLS
 
 load_dotenv()
@@ -42,15 +36,18 @@ def addConcern():
     print(formData)
     ## ===== TODO: (시작) 분리 고민 필요 =====
     token = formData["token"]
-    print(token)
 
     if not token:
-        return ({"message": "Token is missing"}), 403
+        flash("토큰이 없습니다. 로그인해주세요")
+        return redirect(PAGE_URLS["SIGN_IN"])
 
+    # TODO: 토큰 만료 재현
+    # expired_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGVzdGVyMTIzNDUiLCJuaWNrbmFtZSI6InRlc3Rlcl9uaWNrbmFtZTEyMzQ1IiwiZXhwIjoxNzIyOTQ3MDIwfQ.8rFaJnbOpJa-6YEeEVh2LYk0kzXARg7EAD8TNLI3fAE"
     user_dict, error = decode_access_token(token)
 
     if error:
-        return ({"message": error}), 403
+        flash("토큰이 만료되었습니다. 재로그인해주세요")
+        return redirect(PAGE_URLS["SIGN_IN"])
 
     ## ===== TODO: (끝) 분리 고민 필요 =====
     nickname = user_dict["nickname"]
