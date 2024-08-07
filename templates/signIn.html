@@ -28,11 +28,12 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
     crossorigin="anonymous"></script>
 <script>
-    function login(event) {
+    async function login(event) {
         event.preventDefault();
 
         const client_id = $('#user_id').val();
         const client_password = $('#password').val();
+        const hashed_client_password = await hashPassword(client_password)
 
         function getRedirectUrl() {
             var params = new URLSearchParams(window.location.search);
@@ -44,7 +45,7 @@
             type: 'POST',
             url: '/api/user/sign-in',
             contentType: 'application/json',
-            data: JSON.stringify({ 'user_id': client_id, 'password': client_password }),
+            data: JSON.stringify({ 'user_id': client_id, 'password': hashed_client_password }),
 
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status === 200) {

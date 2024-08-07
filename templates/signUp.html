@@ -1,5 +1,5 @@
 <script>
-  function handleSubmit() {
+  async function handleSubmit() {
     const nickname = $('input[name="nickname"]').val();
     const user_id = $('input[name="id"]').val();
     const password = $('input[name="password"]').val();
@@ -10,9 +10,11 @@
       return;
     }
 
+    const hashed_password = await hashPassword(password)
+
     const data = {
       user_id,
-      password,
+      password: hashed_password,
       nickname,
     };
 
