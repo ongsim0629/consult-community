@@ -135,42 +135,44 @@
             const newPassword = document.getElementById('new-password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
 
-            if (newPassword === confirmPassword) {
-
-                const token = getAccesssToken();
-                const hashed_currentPassword = await hashPassword(currentPassword);
-                const hashed_newPassword = await hashPassword(newPassword)
-
-                $.ajax({
-                    type: 'POST',
-                    url: '/api/user/pw',
-                    contentType: 'application/json',
-                    headers: { 'Authorization': 'Bearer ' + token },
-                    data: JSON.stringify({ 'old_pw': hashed_currentPassword, 'new_pw': hashed_newPassword }),
-
-                    success: function (response, textStatus, jqXHR) {
-                        if (jqXHR.status === 200) {
-                            const msg = jqXHR.responseJSON.message;
-                            alert(msg);
-
-                            // TODO: '로그아웃 처리되었습니다.' 메시지도 표시할까?
-                            removeAccessToken()
-                            window.location.href = PAGE_URLS["SIGN_IN"];
-                        } else {
-                            alert('비밀번호 변경 실패');
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        if (jqXHR.status === 400 || 500) {
-                            alert('잘못된 요청: ' + jqXHR.responseJSON.message);
-                        }
-                        else {
-                            alert('오류가 발생했습니다.');
-                        }
-                    }
-                })
-
+            if (newPassword !== confirmPassword || newPassword.trim() === "") {
+                alert("새로운 비번 입력을 확인해주세요!");
+                return
             }
+
+            const token = getAccesssToken();
+            const hashed_currentPassword = await hashPassword(currentPassword);
+            const hashed_newPassword = await hashPassword(newPassword)
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/user/pw',
+                contentType: 'application/json',
+                headers: { 'Authorization': 'Bearer ' + token },
+                data: JSON.stringify({ 'old_pw': hashed_currentPassword, 'new_pw': hashed_newPassword }),
+
+                success: function (response, textStatus, jqXHR) {
+                    if (jqXHR.status === 200) {
+                        const msg = jqXHR.responseJSON.message;
+                        alert(msg);
+
+                        // TODO: '로그아웃 처리되었습니다.' 메시지도 표시할까?
+                        removeAccessToken()
+                        window.location.href = PAGE_URLS["SIGN_IN"];
+                    } else {
+                        alert('비밀번호 변경 실패');
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 400 || 500) {
+                        alert('잘못된 요청: ' + jqXHR.responseJSON.message);
+                    }
+                    else {
+                        alert('오류가 발생했습니다.');
+                    }
+                }
+            })
+
 
             let allWorries = [];
             let index = 0;
