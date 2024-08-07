@@ -61,11 +61,9 @@ def getConcernDetail():
 @concern_detail_bp.route("/concern/solution", methods=["GET"])
 def getSolution():
     concernId = request.args.get("concernId")
-    print(concernId)
     solutions = list(
         db.solutions.find({"concern_id": concernId}).sort({"created_at": -1})
     )
-    print(solutions)
     for i in solutions:
         i["_id"] = str(i["_id"])
         i["created_at"] = formatDateTimeToStr(i["created_at"])
@@ -79,7 +77,6 @@ def getSolution():
 @concern_detail_bp.route("/concern/solution", methods=["POST"])
 def addSolution():
     formData = request.form
-    print(formData)
 
     now = createNow()
     solutionData = {
