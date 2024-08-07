@@ -3,6 +3,9 @@
 {% block title %}고민글 수정 - 해우소{% endblock %}
 
 {% block content %}
+<script>
+    window.addEventListener('DOMContentLoaded', checkAuthorizedAccessAndRedirect)
+</script>
 <h1 class="title has-text-black">고민 수정</h1>
 <form id="postForm" onsubmit="edit_concern(event)">
     <div class="field">

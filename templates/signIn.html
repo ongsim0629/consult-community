@@ -34,6 +34,12 @@
         const client_id = $('#user_id').val();
         const client_password = $('#password').val();
 
+        function getRedirectUrl() {
+            var params = new URLSearchParams(window.location.search);
+            return params.get('redirect');
+        }
+
+
         $.ajax({
             type: 'POST',
             url: '/api/user/sign-in',
@@ -43,11 +49,11 @@
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status === 200) {
                     let token = response['access_token'];
-                    sessionStorage.setItem('access_token', token);
+                    setAccessToken(token);
                     alert('로그인 성공');
-                    // 로그인 성공 후 /mypage로 리디렉션 일단 클라이언트에서 이동하는 것으로 (api: post -> SSR) 잘 모르겠어서
-                    const baseUrl = window.location.origin;
-                    window.location.href = baseUrl + PAGE_URLS['MYPAGE'];
+
+                    const redirectUrl = getRedirectUrl() ?? PAGE_URLS["HOME"];
+                    window.location.href = redirectUrl;
                 } else {
                     alert('로그인 실패');
                 }
