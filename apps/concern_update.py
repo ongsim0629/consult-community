@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
+from constants.python.page_urls import PAGE_URLS
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -22,7 +23,7 @@ def strToBool(s):
 
 
 ## updateConcern 렌더링
-@concern_update_bp.route("/concern/update", methods=["GET"])
+@concern_update_bp.route(PAGE_URLS["CONCERN_EDIT"], methods=["GET"])
 def updateConcernForm():
     # 먼저 고민 아이디 받아와서
     concernId = request.args.get("concern_id")
@@ -32,7 +33,7 @@ def updateConcernForm():
 
 
 ## Concern 업데이트
-@concern_update_bp.route("/concern/update", methods=["POST"])
+@concern_update_bp.route(PAGE_URLS["CONCERN_EDIT"], methods=["POST"])
 def updateConcern():
     data = request.get_json()
     new_title = data.get('new_title')

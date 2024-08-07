@@ -63,7 +63,7 @@
         // 세션 스토리지에 액세스 토큰이 없는 경우
         if (!token) {
             alert('로그인이 필요합니다.');
-            window.location.href = '/signin';
+            window.location.href = PAGE_URLS['SIGN_IN'];
             return;
         }
         // 세션 스토리지에 액세스 토큰이 있으면 -> 디코딩 시작

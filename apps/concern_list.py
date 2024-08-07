@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
+from constants.python.page_urls import PAGE_URLS
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -22,7 +23,7 @@ def strToBool(s):
 
 
 ## concernList 화면 렌더링
-@concern_list_bp.route("/concern/concernList", methods=["GET"])
+@concern_list_bp.route(PAGE_URLS["HOME"], methods=["GET"])
 def getConcernList():
 
     topList = list(db.concerns.find({}).sort("view_count", -1).limit(5))
@@ -40,7 +41,7 @@ def getConcernList():
 
 
 ## concernList 화면 렌더링 테스트용
-@concern_list_bp.route("/concern/concernList/test", methods=["GET"])
+@concern_list_bp.route(PAGE_URLS["HOME"] + "/test", methods=["GET"])
 def getConcernListTest():
 
     topList = list(db.concerns.find({}).sort("view_count", -1).limit(5))

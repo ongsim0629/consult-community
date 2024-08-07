@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
+from constants.python.page_urls import PAGE_URLS
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -22,7 +23,7 @@ def strToBool(s):
 
 
 ## concernDetail 화면 렌더링
-@concern_detail_bp.route("/concern/detail", methods=["GET"])
+@concern_detail_bp.route(PAGE_URLS["CONCERN_DETAIL"], methods=["GET"])
 def getConcernDetail():
     ## 쿼리스트링에서 고민 id 받기
     concernId = request.args.get("concern_id")

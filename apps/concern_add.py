@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
+from constants.python.page_urls import PAGE_URLS
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -22,14 +23,14 @@ def strToBool(s):
 
 
 ## addConcern 화면 렌더링
-@concern_add_bp.route("/concern/add", methods=["GET"])
+@concern_add_bp.route(PAGE_URLS["CONCERN_ADD"], methods=["GET"])
 def addConcernForm():
 
     return render_template("addConcern.html")
 
 
 ## addConcern에서 고민 추가
-@concern_add_bp.route("/concern/add", methods=["POST"])
+@concern_add_bp.route(PAGE_URLS["CONCERN_ADD"], methods=["POST"])
 def addConcern():
     formData = request.form
     concernData = {
@@ -45,6 +46,7 @@ def addConcern():
 
     insertData = db.concerns.insert_one(concernData)
     print(concernData)
-    return redirect("/concern/concernList")
+
+    return redirect(PAGE_URLS["HOME"])
     ## TODO : 위에꺼 없애고 만들어진 고민으로 리다이렉트
     ## : JWT에서 닉네임 받기
