@@ -31,6 +31,9 @@
     <div class="content" style="background-color: rgb(245,245,245); height: 300px">
         <p>{{concern.content}}</p>
     </div>
+    <div class="content" style="display:none">
+        <p id="concern-id">{{concern._id}}</p>
+    </div>
 </div>
 
 
@@ -63,7 +66,7 @@
             </div>
         </div>
     </form>
-    <div id="comments">
+    <div id="solutions">
         {% for solution in solutions %}
         <div class="box">
             <p><strong>{{solution.created_by}} </strong>| {{solution.content}}</p>
@@ -96,6 +99,69 @@
     crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 <script>
+
+    const token = sessionStorage.getItem('access_token');
+    const decodedToken = jwt_decode(token);
+    const userId = decodedToken.user_id;
+    urlSearch = new URLSearchParams(location.search);
+
+    // 솔루션 조회
+    $(document).ready(function () {
+        showSolution();
+    });
+
+    function showSolution() {
+        $("#solutions").html("");
+        let concernId = urlSearch.get('concern_id');
+        $.ajax({
+            type: "GET",
+            url: "/concern/solution",
+            data: {
+                'concernId': concernId
+            },
+            success: function (response) {
+                if (response["result"] == "success") {
+                    let solutions = response["solutions"];
+                    for (let i = 0; i < solutions.length; i++) {
+                        makeSolution(solutions[i]["_id"], solutions[i]["content"], solutions[i]["revealed"], solutions[i]["created_by"], userId);
+                    }
+                }
+            }
+        })
+    }
+
+    //솔루션 생성
+    function makeSolution(id, content, revealed, created_by, userId) {
+        let revealed_name;
+
+        if (created_by == userId || revealed == true) {
+            revealed_name = created_by;
+        } else {
+            revealed_name = "익명스님";
+        }
+        let temp_html =
+            `<div class="box">
+                <div style="display: flex; align-items: center;">
+                    <div class="control" style="flex-grow: 1; margin-right: 10px;">
+                        <p><strong>${revealed_name} </strong>| ${content}</p>
+                    </div>`;
+
+        if (created_by == userId) {
+            temp_html +=
+                `<div class="control">
+                    <button class="button is-danger">삭제</button>
+                </div>
+            </div>
+        </div>`;
+        } else {
+            temp_html +=
+                `</div>
+        </div>`;
+        }
+
+
+        $("#solutions").append(temp_html);
+    }
 
     // 댓글 추가 기능
     function addSolution() {

@@ -37,6 +37,20 @@ def getConcernDetail():
     # return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
 
 
+## solution 조회 (API)
+@concern_detail_bp.route("/concern/solution", methods=["GET"])
+def getSolution():
+    concernId = request.args.get("concern_id")
+    solutions = list(db.concerns.find({"concern_id": concernId}))
+
+    for i in solutions:
+        i["_id"] = str(i["_id"])
+
+    return jsonify(
+        {"result": "success", "solutions": solutions, "msg": "getSolution 성공!"}
+    )
+
+
 ## solution 생성 (API)
 @concern_detail_bp.route("/concern/solution", methods=["POST"])
 def addSolution():
