@@ -74,9 +74,6 @@ def get_concerns_by_user():
     ## ===== TODO: (끝) 분리 고민 필요 =====
 
     nickname = user_dict["nickname"]
-
-    print("nickname", nickname)
-
     data = list(db.concerns.find({"created_by": nickname}).sort({"created_at": -1}))
 
     for i in data:
