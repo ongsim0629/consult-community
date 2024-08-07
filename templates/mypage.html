@@ -57,38 +57,11 @@
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // 세션 스토리지에서 액세스 토큰 가져오기
-        const token = sessionStorage.getItem('access_token');
 
-        // 세션 스토리지에 액세스 토큰이 없는 경우
-        if (!token) {
-            alert('로그인이 필요합니다.');
-            window.location.href = PAGE_URLS['SIGN_IN'];
-            return;
-        }
-        // 세션 스토리지에 액세스 토큰이 있으면 -> 디코딩 시작
-        else {
-            const base64Payload = token.split('.')[1];
-            const base64 = base64Payload.replace(/-/g, '+').replace(/_/g, '/');
-            const decodedJWT = JSON.parse(
-                decodeURIComponent(
-                    window
-                        .atob(base64)
-                        .split('')
-                        .map(function (c) {
-                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                        })
-                        .join('')
-                )
-            );
+        const userObj = getUserObjFromAccessToken()
 
-            const user_id_from_token = decodedJWT.user_id;
-            const nickname_from_tokne = decodedJWT.nickname;
-
-            document.getElementById('nickname').innerText = nickname_from_tokne;
-            document.getElementById('user-id').innerText = user_id_from_token;
-        }
-
+        document.getElementById('nickname').innerText = userObj.nickname;
+        document.getElementById('user-id').innerText = userObj.user_id;
 
         // 비밀번호 수정 버튼 클릭 시 폼 토글
         document.getElementById('edit-pw-button').addEventListener('click', function () {
