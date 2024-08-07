@@ -41,8 +41,7 @@
     <div id="navbarMenu" class="navbar-menu">
       <div class="navbar-end">
         <a id="navbar-mypage" class="navbar-item" href="">회원정보</a>
-        <!-- TODO: logout 액션이 호출되어야함 (JWT 제거) 후 홈으로 이동 -->
-        <a class="navbar-item" href="/logout">로그아웃</a>
+        <a class="navbar-item" onclick="logout()">로그아웃</a>
       </div>
     </div>
   </nav>
@@ -79,6 +78,22 @@
         });
       }
     });
+
+    function logout() {
+      const token = sessionStorage.getItem('access_token');
+      const PAGE_SIGN_IN = "/signin";
+      const baseUrl = window.location.origin;
+      // 세션 스토리지에 토큰 없으면 동작 X
+      if (!token) {
+        return;
+      }
+      // 세션 스토리지에 토큰이 존재했다면 -> 세션스토리지에서 토큰 삭제 후 로그인으로 이동
+      else {
+        sessionStorage.removeItem("access_token");
+        alert("로그아웃 되었습니다.");
+        window.location.href = baseUrl + PAGE_SIGN_IN;
+      }
+    }
   </script>
 </body>
 
