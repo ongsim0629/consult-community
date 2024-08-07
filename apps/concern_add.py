@@ -34,13 +34,27 @@ def addConcernForm():
 def addConcern():
     formData = request.form
 
+    token = formData["token"]
+
+    if not token:
+        flash("토큰이 없습니다. 로그인해주세요")
+        return redirect(PAGE_URLS["SIGN_IN"])
+
+    user_dict, error = decode_access_token(token)
+
+    if error:
+        flash("토큰이 만료되었습니다. 재로그인해주세요")
+        return redirect(PAGE_URLS["SIGN_IN"])
+
+    nickname = user_dict["nickname"]
+
     concernData = {
         "title": formData["title"],
         "content": formData["content"],
         "revealed": strToBool(formData["revealed"]),
         "view_count": 0,
         "created_at": now,
-        "created_by": formData["user_id"],
+        "created_by": nickname,
         "updated_at": now,
     }
     insertData = db.concerns.insert_one(concernData)
