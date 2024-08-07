@@ -29,6 +29,10 @@ def updateConcernForm():
     concernId = request.args.get("concern_id")
     concern = db.concerns.find_one({"_id": ObjectId(concernId)})
     
+    # concernId 적절한 값 아니면 -> concern 존재 X
+    if not concern: 
+        return jsonify({"message":"해당하는 고민이 없습니다."})
+    
     return render_template("editConcern.html", concern=concern)
 
 
@@ -41,7 +45,7 @@ def updateConcern():
     concernId = data.get('concern_id')
     revealed = data.get('revealed')
     
-    if not all([new_title, new_content, concernId, revealed]):
+    if not all([new_title, new_content, revealed]):
         return jsonify({"message": "모든 필드를 입력해주세요."}), 400
     
     db.concerns.update_one({"_id": ObjectId(concernId)}, {'$set': {"title": new_title, "content": new_content, "revealed": strToBool(revealed)}})
