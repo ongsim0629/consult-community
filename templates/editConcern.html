@@ -70,7 +70,7 @@
         const new_title = document.getElementById('new_title').value.trim();
         const new_content = document.getElementById('new_content').value.trim();
         const revealed = document.querySelector('input[name="revealed"]:checked').value;
-        const PAGE_DETAIL = `${PAGE_URLS["CONCERN_DETAIL"]}?concern_id=${concern_id}`;
+        const PAGE_DETAIL = `${PAGE_URLS["CONCERN_DETAIL"]}?concern_id=${concern_id}&flag=true`;
         const baseUrl = window.location.origin;
 
         $.ajax({

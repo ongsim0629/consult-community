@@ -7,7 +7,7 @@
     window.addEventListener('DOMContentLoaded', checkAuthorizedAccessAndRedirect)
 
     const handleMoveToEditPage = () => {
-        window.location.href = `PAGE_URLS["CONCERN_EDIT"]?concern_id={{concern._id}}`
+        window.location.href = `${PAGE_URLS["CONCERN_EDIT"]}?concern_id={{concern._id}}`
     }
 </script>
 <div class="section">
