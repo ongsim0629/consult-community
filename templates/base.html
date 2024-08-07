@@ -92,7 +92,7 @@
       }
       // 세션 스토리지에 토큰이 존재했다면 -> 세션스토리지에서 토큰 삭제 후 로그인으로 이동
       else {
-        sessionStorage.removeItem("access_token");
+        removeAccessToken()
         alert("로그아웃 되었습니다.");
         window.location.href = baseUrl + PAGE_SIGN_IN;
       }

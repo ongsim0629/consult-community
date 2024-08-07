@@ -93,8 +93,9 @@
                         if (jqXHR.status === 200) {
                             const msg = jqXHR.responseJSON.message;
                             alert(msg);
-                            // 액세스 토큰 삭제
-                            sessionStorage.removeItem("access_token");
+
+                            // TODO: '로그아웃 처리되었습니다.' 메시지도 표시할까?
+                            removeAccessToken()
                             window.location.href = BASE_URLS["SIGN_IN"];
                         } else {
                             alert('비밀번호 변경 실패');
