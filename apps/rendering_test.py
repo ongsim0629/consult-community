@@ -32,4 +32,4 @@ def concerndetail():
 
 @rendering_bp.route(PAGE_URLS["MYPAGE"])
 def mypage():
-    return render_template("myPage.html")
+    return render_template("mypage.html")
