@@ -30,9 +30,8 @@ def strToBool(s):
 @concern_list_bp.route(PAGE_URLS["HOME"], methods=["GET"])
 def getConcernList():
 
-    topList = list(db.concerns.find({}).sort("view_count", -1).limit(5))
-
-    concernList = list(db.concerns.find({}).sort("created_at", -1))
+    topList = list(db.concerns.find({}).sort({"view_count": -1}).limit(5))
+    concernList = list(db.concerns.find({}).sort({"created_at": -1}))
 
     for i in topList:
         i["_id"] = str(i["_id"])
@@ -71,7 +70,7 @@ def get_concerns_by_user():
 
     print("nickname", nickname)
 
-    data = list(db.concerns.find({"created_by": nickname}))  # .sort("created_at", -1))
+    data = list(db.concerns.find({"created_by": nickname}).sort({"created_at": -1}))
 
     for i in data:
         i["_id"] = str(i["_id"])
@@ -84,9 +83,9 @@ def get_concerns_by_user():
 @concern_list_bp.route(PAGE_URLS["HOME"] + "/test", methods=["GET"])
 def getConcernListTest():
 
-    topList = list(db.concerns.find({}).sort("view_count", -1).limit(5))
+    topList = list(db.concerns.find({}).sort({"view_count": -1}).limit(5))
 
-    concernList = list(db.concerns.find({}).sort("created_at", 1))
+    concernList = list(db.concerns.find({}).sort({"created_at": 1}))
 
     for i in topList:
         i["_id"] = str(i["_id"])
