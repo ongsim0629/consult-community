@@ -34,7 +34,6 @@ def getConcernDetail():
     )  # ObjectId는 Json 안에 담을 수 없다. String으로 바꿔줄 것
 
     nickname_concern_creator = concern["created_by"]
-    solutions = list(db.concerns.find({"concern_id": concernId}))
 
     # revealed가 "false"이면 alias를 "익명스님"으로 설정 -> 지금 db에 불린 false랑 string flase 혼재 중 -> 수정
     alias = "익명스님" if concern.get("revealed") is False else None
@@ -50,12 +49,9 @@ def getConcernDetail():
     return render_template(
         "concernDetail.html",
         concern=concern,
-        solutions=solutions,
         alias=alias,
         nickname_concern_creator=nickname_concern_creator,
     )
-
-    # return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
 
 
 ## solution 조회 (API)
@@ -69,6 +65,7 @@ def getSolution():
     print(solutions)
     for i in solutions:
         i["_id"] = str(i["_id"])
+        i["created_at"] = i["created_at"].strftime("%Y년 %m월 %d일 %H시 %M분 %S초")
 
     return jsonify(
         {"result": "success", "solutions": solutions, "msg": "getSolution 성공!"}
