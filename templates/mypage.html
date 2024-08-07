@@ -47,7 +47,7 @@
     <!-- 고민 목록 섹션 -->
     <section class="section">
         <h2 class="title">내 고민들</h2>
-        <div id="worries-list">
+        <div id="worries-list" style="display: flex; flex-direction: column; gap: 5px;">
             <!-- 고민 목록이 이곳에 동적으로 추가될 예정 -->
         </div>
 
@@ -59,7 +59,63 @@
 </div>
 
 <script>
+    const handleMoveToDetail = (concernId) => {
+        const targetURL = `${PAGE_URLS["CONCERN_DETAIL"]}?concern_id=${concernId}`
+        window.location.href = targetURL;
+    }
+
+    const loadWorries = () => {
+        const token = getAccesssToken();
+
+        $.ajax({
+            url: '/api/concerns',
+            type: 'GET',
+            contentType: 'application/json',
+            headers: { 'Authorization': 'Bearer ' + token },
+            success: function (response) {
+
+                const data = response.data;
+
+                const $worriesList = $('#worries-list');
+
+                if (data.length === 0) {
+                    $worriesList.innerHTML = "내 고민이 없습니다.";
+                    return
+                }
+
+                for (let i = 0; i < data.length; i++) {
+                    const item = data[i];
+                    const worryItem = document.createElement('div');
+                    console.log(item)
+                    // fyi. ConcernItem Card
+                    worryItem.innerHTML = `
+                    <div class="box" onclick="handleMoveToDetail('${item._id}')">
+                        <article class="media">
+                            <div class="media-content">
+                                <div class="content">
+                                    <p class="has-text-black">
+                                    <h2 class="subtitle">${item.title}</h2>
+                                    <p>${item.created_by} | 조회수: ${item.view_count}</p>
+                                    </p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    `
+                    $worriesList.append(worryItem)
+                }
+            },
+            error: function (response, textStatus, jqXHR) {
+                // alert(jqXHR.responseJSON.message);
+            }
+        });
+
+    }
+
+
     document.addEventListener('DOMContentLoaded', function () {
+
+        loadWorries()
 
         const userObj = getUserObjFromAccessToken()
 
