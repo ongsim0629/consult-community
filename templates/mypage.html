@@ -80,14 +80,16 @@
 
             if (newPassword === confirmPassword) {
 
-                const hashed_password = await hashPassword(newPassword)
+                const token = getAccesssToken();
+                const hashed_currentPassword = await hashPassword(currentPassword);
+                const hashed_newPassword = await hashPassword(newPassword)
 
                 $.ajax({
                     type: 'POST',
                     url: '/api/user/pw',
                     contentType: 'application/json',
                     headers: { 'Authorization': 'Bearer ' + token },
-                    data: JSON.stringify({ 'old_pw': currentPassword, 'new_pw': hashed_password }),
+                    data: JSON.stringify({ 'old_pw': hashed_currentPassword, 'new_pw': hashed_newPassword }),
 
                     success: function (response, textStatus, jqXHR) {
                         if (jqXHR.status === 200) {
