@@ -15,11 +15,6 @@ def signin():
     return render_template("signIn.html")
 
 
-@rendering_bp.route(PAGE_URLS["CONCERN_LIST"])
-def concerns():
-    return render_template("concernList.html")
-
-
 @rendering_bp.route(PAGE_URLS["CONCERN_ADD"])
 def addconcern():
     return render_template("addConcern.html")
