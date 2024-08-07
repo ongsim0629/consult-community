@@ -4,7 +4,6 @@
 
 {% block content %}
 <script>
-
     const checkOwner = () => {
         const userObj = getUserObjFromAccessToken();
         const loggedInUserNickname = userObj["nickname"];
@@ -17,7 +16,6 @@
         } else {
             $modifyBtn.hide();
         }
-
     }
 
     const handleMoveToEditPage = () => {
@@ -25,13 +23,14 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-        checkOwner()
-        checkAuthorizedAccessAndRedirect()
-    })
+        checkOwner();
+        checkAuthorizedAccessAndRedirect();
+    });
 
 </script>
+
 <div class="section">
-    <input style="display: none;" id="nickname_concern_creator" value="{{nickname_concern_creator}}" />
+    <input type="hidden" id="nickname_concern_creator" value="{{ nickname_concern_creator }}" />
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <h1 class="title has-text-black" style="margin-right: 10px;">고민 읽기</h1>
         <button id="modify-btn" type="submit" class="button is-primary" onclick="handleMoveToEditPage()">수정</button>
@@ -62,7 +61,6 @@
         <p id="concern-id">{{concern._id}}</p>
     </div>
 </div>
-
 
 <div class="section">
     <h2 class="title has-text-black">솔루션</h2>
@@ -95,19 +93,16 @@
     </form>
     <div id="solutions"></div>
 </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
     crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 <script>
-
     const token = sessionStorage.getItem('access_token');
     const decodedToken = jwt_decode(token);
-    const userId = decodedToken.user_id;
+    const userNickcname = decodedToken.nickname;
     urlSearch = new URLSearchParams(location.search);
 
-    // 솔루션 조회
     $(document).ready(function () {
         showSolution();
     });
@@ -122,81 +117,75 @@
                 'concernId': concernId
             },
             success: function (response) {
-                if (response["result"] == "success") {
+                if (response["result"] === "success") {
+                    let concernNickname = response["concernNickname"];
                     let solutions = response["solutions"];
                     for (let i = 0; i < solutions.length; i++) {
-                        makeSolution(solutions[i]["_id"], solutions[i]["content"], solutions[i]["revealed"], solutions[i]["created_by"], userId, solutions[i]['created_at']);
+                        makeSolution(solutions[i]["_id"], solutions[i]["content"], solutions[i]["revealed"], solutions[i]["created_by"], solutions[i]['created_at'], concernNickname);
                     }
                 }
             }
-        })
+        });
     }
 
-    //솔루션 생성
-    function makeSolution(id, content, revealed, created_by, userId, created_at) {
+    function makeSolution(id, content, revealed, created_by, created_at, concernNickname) {
         let revealed_name;
+        let temp_html;
 
-        if (created_by == userId || revealed == true) {
+        if (created_by === userNickcname || revealed === true || userNickcname === concernNickname) {
             revealed_name = created_by;
-        } else {
-            revealed_name = "익명스님";
-        }
-        let temp_html =
-            `<div class="box">
+            temp_html = `<div class="box">
                 <div style="display: flex; align-items: center;">
                     <div class="control" style="flex-grow: 1; margin-right: 10px;">
                         <p>생성일시 ${created_at}</p>
-                        <p><strong>${revealed_name} </strong>| ${content}</p>
+                        <p><strong>${revealed_name}</strong> | ${content}</p>
                     </div>`;
-
-        if (created_by == userId) {
-            temp_html +=
-                `<div class="control">
+            if (created_by === userNickcname) {
+                temp_html += `<div class="control">
                     <button class="button is-danger" onclick="deleteSolution('${id}')">삭제</button>
                 </div>
             </div>
         </div>`;
-        } else {
-            temp_html +=
-                `</div>
+            } else {
+                temp_html += `</div>
         </div>`;
+            }
+        } else {
+            temp_html = `<div class="box">
+                <p><span style="color:rgb(175, 175, 175)">익명 스님의 해답입니다.</span></p>
+            </div>`;
         }
-
 
         $("#solutions").append(temp_html);
     }
 
-    // 댓글 추가 기능
     function addSolution() {
         const token = sessionStorage.getItem('access_token');
         const decodedToken = jwt_decode(token);
-        const userId = decodedToken.user_id;
+        const userNickname = decodedToken.nickname;
 
-        const form = document.getElementById("solution-form"); // 오타 수정
+        const form = document.getElementById("solution-form");
         const formData = new FormData(form);
 
-        // content 필드 값 가져오기
         const content = formData.get("content");
 
-        // content 필드가 비어 있으면 경고 메시지 표시
         if (!content || content.trim() === "") {
             alert("내용을 입력해주세요.");
             return;
         }
 
-        // formData에 각각 값 추가
         formData.append("concern_id", "{{ concern._id }}");
-        formData.append("user_id", userId);
+        formData.append("user_nickname", userNickname);
         formData.append("concerned_by", "{{ concern.created_by }}");
 
         $.ajax({
             type: "POST",
             url: "/concern/solution",
             data: formData,
-            processData: false,  // jQuery가 데이터를 문자열로 변환하지 않도록 설정
-            contentType: false,  // jQuery가 콘텐츠 타입을 설정하지 않도록 설정
+            processData: false,
+            contentType: false,
             success: function (response) {
-                if (response.result == "success") {
+                if (response.result === "success") {
                     alert("등록 완료!");
                     showSolution();
                 } else {
@@ -210,20 +199,15 @@
     }
 
     function deleteSolution(solutionId) {
-        const token = sessionStorage.getItem('access_token');
-        const decodedToken = jwt_decode(token);
-        const userId = decodedToken.user_id;
 
         $.ajax({
             type: "DELETE",
             url: `/concern/solution/${solutionId}`,
             contentType: "application/json",
             dataType: "json",
-            data: JSON.stringify({
-                user_id: userId
-            }),
+            data: JSON.stringify({}),
             success: function (response) {
-                if (response.result == "success") {
+                if (response.result === "success") {
                     alert("삭제 완료!");
                     showSolution();
                 } else {

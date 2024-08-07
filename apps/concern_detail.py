@@ -97,7 +97,7 @@ def addSolution():
         "concern_id": formData["concern_id"],
         "concerned_by": formData["concerned_by"],
         "created_at": now,
-        "created_by": formData["user_id"],
+        "created_by": formData["user_nickname"],
         "updated_at": now,
     }
     db.solutions.insert_one(solutionData)
