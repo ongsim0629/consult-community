@@ -3,7 +3,9 @@
 {% block title %}해우소 - 고민 게시판{% endblock %}
 
 {% block content %}
-
+<script>
+    window.addEventListener('DOMContentLoaded', checkAuthorizedAccessAndRedirect)
+</script>
 <script>
     const handleMoveToAddConcern = () => {
         window.location.href = PAGE_URLS["CONCERN_ADD"]

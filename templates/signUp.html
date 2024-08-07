@@ -24,8 +24,7 @@
       contentType: "application/json",
       data: JSON.stringify(data),
       success: function (res) {
-        const PAGE_SIGN_IN = "/signin";
-        window.location.href = PAGE_SIGN_IN;
+        window.location.href = PAGE_URLS['SIGN_IN'];
       },
       error: function (xhr, status, error) {
         const errorMessage = xhr.responseJSON.message;

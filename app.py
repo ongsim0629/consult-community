@@ -1,6 +1,8 @@
 from flask import Flask, jsonify
-from apps.concern import concern_bp
-from apps.concernDetail import concern_detail_bp
+from apps.concern_add import concern_add_bp
+from apps.concern_detail import concern_detail_bp
+from apps.concern_list import concern_list_bp
+from apps.concern_update import concern_update_bp
 from apps.user import user_bp
 from apps.rendering_test import rendering_bp
 
@@ -8,8 +10,10 @@ from apps.rendering_test import rendering_bp
 app = Flask(__name__)
 
 app.register_blueprint(user_bp)
-app.register_blueprint(concern_bp)
+app.register_blueprint(concern_add_bp)
 app.register_blueprint(concern_detail_bp)
+app.register_blueprint(concern_list_bp)
+app.register_blueprint(concern_update_bp)
 app.register_blueprint(rendering_bp)
 
 

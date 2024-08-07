@@ -3,12 +3,14 @@
 {% block title %}해우소 - 고민 상세 페이지{% endblock %}
 
 {% block content %}
-
+<script>
+    window.addEventListener('DOMContentLoaded', checkAuthorizedAccessAndRedirect)
+</script>
 <div class="section">
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <h1 class="title has-text-black" style="margin-right: 10px;">고민 읽기</h1>
         <!-- 글 작성자 id == 토큰 아이디인 경우 -> 수정 버튼 display -->
-        <button type="submit" class="button is-primary">수정</button>
+        <button type="submit" class="button is-primary" onclick="location.href='/concern/update?concern_id={{concern._id}}'">수정</button>
     </div>
     <div style="display: flex; align-items: center; justify-content: flex-start; width: 100%; margin-bottom: 10px;">
         <p class="subtitle has-text-black"
