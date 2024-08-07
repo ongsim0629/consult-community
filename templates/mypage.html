@@ -95,8 +95,7 @@
                             alert(msg);
                             // 액세스 토큰 삭제
                             sessionStorage.removeItem("access_token");
-                            const baseUrl = window.location.origin;
-                            window.location.href = baseUrl + '/signin';
+                            window.location.href = BASE_URLS["SIGN_IN"];
                         } else {
                             alert('비밀번호 변경 실패');
                         }

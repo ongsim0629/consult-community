@@ -84,7 +84,7 @@
 
     function logout() {
       const token = sessionStorage.getItem('access_token');
-      const PAGE_SIGN_IN = "/signin";
+      const PAGE_SIGN_IN = BASE_URLS["SIGN_IN"];
       const baseUrl = window.location.origin;
       // 세션 스토리지에 토큰 없으면 동작 X
       if (!token) {
