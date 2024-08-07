@@ -16,7 +16,9 @@ concern_detail_bp = Blueprint("concern_detail_bp", __name__)
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
-now = datetime.now()
+
+def createNow():
+    return datetime.now()
 
 
 def strToBool(s):
@@ -78,6 +80,7 @@ def addSolution():
     formData = request.form
     print(formData)
 
+    now = createNow()
     solutionData = {
         "content": formData["content"],
         "revealed": strToBool(formData["revealed"]),

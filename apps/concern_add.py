@@ -15,7 +15,9 @@ concern_add_bp = Blueprint("concern_add_bp", __name__)
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
-now = datetime.now()
+
+def createNow():
+    return datetime.now()
 
 
 def strToBool(s):
@@ -48,6 +50,7 @@ def addConcern():
 
     nickname = user_dict["nickname"]
 
+    now = createNow()
     concernData = {
         "title": formData["title"],
         "content": formData["content"],
