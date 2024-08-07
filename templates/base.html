@@ -13,7 +13,7 @@
   <script src="{{ url_for('static', filename='js/encrypt.js') }}"></script>
   <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
   <script>
-    const setPageUrls = () => {
+    const setMenuBar = () => {
       const $HOME = document.querySelector("#navbar-home");
       $HOME.href = PAGE_URLS["HOME"];
 
@@ -22,10 +22,18 @@
 
       const $GITHUB_LINK = document.querySelector("#github-link");
       $GITHUB_LINK.href = PAGE_URLS["GITHUB_REPO"];
+
+      const isLoggedIn = getIsLoggedIn();
+      if (isLoggedIn) {
+        const $menuBar = $("#navbarMenu .navbar-end");
+
+        $(".navbar-burger").show()
+      } else {
+        $(".navbar-burger").hide()
+      }
     }
 
-    window.addEventListener('load', setPageUrls);
-
+    window.addEventListener('DOMContentLoaded', setMenuBar);
   </script>
 </head>
 
@@ -83,19 +91,9 @@
     });
 
     function logout() {
-      const token = sessionStorage.getItem('access_token');
-      const PAGE_SIGN_IN = BASE_URLS["SIGN_IN"];
-      const baseUrl = window.location.origin;
-      // 세션 스토리지에 토큰 없으면 동작 X
-      if (!token) {
-        return;
-      }
-      // 세션 스토리지에 토큰이 존재했다면 -> 세션스토리지에서 토큰 삭제 후 로그인으로 이동
-      else {
-        removeAccessToken()
-        alert("로그아웃 되었습니다.");
-        window.location.href = baseUrl + PAGE_SIGN_IN;
-      }
+      removeAccessToken()
+      alert("로그아웃 되었습니다.");
+      window.location.href = PAGE_URLS["SIGN_IN"]
     }
   </script>
 </body>

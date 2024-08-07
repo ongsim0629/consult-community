@@ -80,14 +80,16 @@
 
             if (newPassword === confirmPassword) {
 
-                const hashed_password = await hashPassword(newPassword)
+                const token = getAccesssToken();
+                const hashed_currentPassword = await hashPassword(currentPassword);
+                const hashed_newPassword = await hashPassword(newPassword)
 
                 $.ajax({
                     type: 'POST',
                     url: '/api/user/pw',
                     contentType: 'application/json',
                     headers: { 'Authorization': 'Bearer ' + token },
-                    data: JSON.stringify({ 'old_pw': currentPassword, 'new_pw': hashed_password }),
+                    data: JSON.stringify({ 'old_pw': hashed_currentPassword, 'new_pw': hashed_newPassword }),
 
                     success: function (response, textStatus, jqXHR) {
                         if (jqXHR.status === 200) {
@@ -96,7 +98,7 @@
 
                             // TODO: '로그아웃 처리되었습니다.' 메시지도 표시할까?
                             removeAccessToken()
-                            window.location.href = BASE_URLS["SIGN_IN"];
+                            window.location.href = PAGE_URLS["SIGN_IN"];
                         } else {
                             alert('비밀번호 변경 실패');
                         }

@@ -14,10 +14,14 @@ const removeAccessToken = () => {
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
 };
 
-const checkAuthorizedAccessAndRedirect = () => {
+const getIsLoggedIn = () => {
     const token = getAccesssToken();
 
-    if (!token) {
+    return Boolean(token);
+};
+
+const checkAuthorizedAccessAndRedirect = () => {
+    if (!getIsLoggedIn()) {
         alert('로그인이 필요합니다.');
 
         // fyi. 로그인 성공 이후 redirect 시킬 곳

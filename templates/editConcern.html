@@ -74,7 +74,7 @@
         const baseUrl = window.location.origin;
 
         $.ajax({
-            url: '/concern/update',
+            url: PAGE_URLS["CONCERN_EDIT"],
             type: 'POST',
             data: JSON.stringify({ new_title: new_title, new_content: new_content, concern_id: concern_id, revealed: revealed }),
             contentType: 'application/json',
