@@ -50,7 +50,7 @@
             style="flex: 0 0 10%; padding-right: 10px; white-space: nowrap; line-height: 1.5;">닉네임</p>
         <div class="box"
             style="flex: 1 0 90%; padding: 10px; background-color: rgb(245, 245, 245); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;">
-            {{concern.created_by}}
+            {{ alias if alias else concern.created_by }}
         </div>
     </div>
 

@@ -36,6 +36,9 @@ def getConcernDetail():
     nickname_concern_creator = concern["created_by"]
     solutions = list(db.concerns.find({"concern_id": concernId}))
     
+    # revealed가 "false"이면 alias를 "익명스님"으로 설정 -> 지금 db에 불린 false랑 string flase 혼재 중 -> 수정
+    alias = "익명스님" if concern.get("revealed")  is False else None   
+    
     ## 수정시 조회수 +1 안 하기 위한 쿼리 파라미터
     flag = request.args.get("flag", "false")
     
@@ -46,8 +49,10 @@ def getConcernDetail():
         "concernDetail.html",
         concern=concern,
         solutions=solutions,
+        alias=alias,  
         nickname_concern_creator=nickname_concern_creator,
     )
+
 
     # return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
 
