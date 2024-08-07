@@ -37,9 +37,11 @@ def getConcernList():
         i["_id"] = str(i["_id"])
         if i.get("revealed") is False:
             i["created_by"] = "익명스님"
+        i["created_at"] = i["created_at"].strftime("%Y년 %m월 %d일 %H시 %M분")
 
     for i in concernList:
         i["_id"] = str(i["_id"])
+        i["created_at"] = i["created_at"].strftime("%Y년 %m월 %d일 %H시 %M분 %S초")
         if i.get("revealed") is False:
             i["created_by"] = "익명스님"
 
@@ -74,6 +76,7 @@ def get_concerns_by_user():
 
     for i in data:
         i["_id"] = str(i["_id"])
+        i["created_at"] = i["created_at"].strftime("%Y년 %m월 %d일 %H시 %M분 %S초")
 
     ## TODO: 무한 스크롤(페이징) 고민
     return jsonify({"data": data}), 200
