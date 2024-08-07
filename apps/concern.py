@@ -75,7 +75,6 @@ def addConcernForm():
 @concern_bp.route("/concern/add", methods=["POST"])
 def addConcern():
     formData = request.form
-    print(formData)
     concernData = {
         "title": formData["title"],
         "content": formData["content"],
@@ -87,7 +86,8 @@ def addConcern():
     }
     print(concernData)
 
-    db.concerns.insert_one(concernData)
+    insertData = db.concerns.insert_one(concernData)
+    print(concernData)
     return redirect("/concern/concernList")
     # return jsonify({'result': 'success', 'msg':'addConcern 성공!'})
     ## TODO : 위에꺼 없애고 만들어진 고민으로 리다이렉트
@@ -127,8 +127,7 @@ def addSolution():
         "updated_at": now,
     }
     db.solutions.insert_one(solutionData)
-    return redirect("/concern/concernList")
-    # return jsonify({'result':'success', 'msg':'addSolution 성공!'})
+    return jsonify({"result": "success", "msg": "addSolution 성공!"})
 
 
 ## solution 삭제 (API)
@@ -136,16 +135,3 @@ def addSolution():
 def deleteSolution(concern_id):
     db.todos.delete_one({"_id": ObjectId(concern_id)})
     return jsonify({"result": "success", "msg": "deleteSolution 완료!"})
-
-
-# ## updateConcern 렌더링
-# @concern_bp.route('/concern/update', methods=['GET']) ## 파라미터 넣는법 찾아볼것
-# def updateConcernForm():
-
-# ## Concern 업데이트 (API)
-# @concern_bp.route('/concern/update', methods=['POST']) ## 파라미터 넣는법 찾아볼것
-# def updateConcern():
-
-# ## Concern 삭제 (API)
-# @concern_bp.route('/concern/delete', methods=['DELETE']) ## 파라미터 넣는법 찾아볼것
-# def deleteConcern():
