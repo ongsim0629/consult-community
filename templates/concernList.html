@@ -5,6 +5,10 @@
 {% block content %}
 
 <script>
+    const handleMoveToAddConcern = () => {
+        window.location.href = PAGE_URLS["CONCERN_ADD"]
+    }
+
     const handleMoveToDetail = (concernId) => {
         const targetURL = `${PAGE_URLS["CONCERN_DETAIL"]}?concern_id=${concernId}`
         window.location.href = targetURL;
@@ -37,7 +41,7 @@
     <section class="section">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <h1 class="title has-text-black" style="margin-right: 10px;">전체 고민들</h1>
-            <button type="button" class="button is-primary" onclick="location.href='/concern/add'">고민 생성</button>
+            <button type="button" class="button is-primary" onclick="handleMoveToAddConcern()">고민 생성</button>
 
         </div>
 

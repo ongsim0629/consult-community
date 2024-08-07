@@ -4,7 +4,7 @@ PAGE_URLS = {
     "SIGN_IN": "/",
     "SIGN_UP": "/signup",
     "CONCERN_LIST": "/concerns",
-    "CONCERN_ADD": "/addconcern",
+    "CONCERN_ADD": "/concern/add",
     "CONCERN_EDIT": "/editconcern",
     "CONCERN_DETAIL": "/concern/detail",
     "MYPAGE": "/mypage",

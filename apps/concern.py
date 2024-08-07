@@ -66,14 +66,14 @@ def getConcernListTest():
 
 
 ## addConcern 화면 렌더링
-@concern_bp.route("/concern/add", methods=["GET"])
+@concern_bp.route(PAGE_URLS["CONCERN_ADD"], methods=["GET"])
 def addConcernForm():
 
     return render_template("addConcern.html")
 
 
 ## addConcern에서 고민 추가
-@concern_bp.route("/concern/add", methods=["POST"])
+@concern_bp.route(PAGE_URLS["CONCERN_ADD"], methods=["POST"])
 def addConcern():
     formData = request.form
     print(formData)
