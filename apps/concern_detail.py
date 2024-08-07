@@ -40,9 +40,12 @@ def getConcernDetail():
 ## solution 조회 (API)
 @concern_detail_bp.route("/concern/solution", methods=["GET"])
 def getSolution():
-    concernId = request.args.get("concern_id")
-    solutions = list(db.concerns.find({"concern_id": concernId}))
-
+    concernId = request.args.get("concernId")
+    print(concernId)
+    solutions = list(
+        db.solutions.find({"concern_id": concernId}).sort("created_at", -1)
+    )
+    print(solutions)
     for i in solutions:
         i["_id"] = str(i["_id"])
 
@@ -71,7 +74,7 @@ def addSolution():
 
 
 ## solution 삭제 (API)
-@concern_detail_bp.route("/concern/solution/<concern_id>", methods=["DELETE"])
-def deleteSolution(concern_id):
-    db.todos.delete_one({"_id": ObjectId(concern_id)})
+@concern_detail_bp.route("/concern/solution/<solution_id>", methods=["DELETE"])
+def deleteSolution(solution_id):
+    db.solutions.delete_one({"_id": ObjectId(solution_id)})
     return jsonify({"result": "success", "msg": "deleteSolution 완료!"})

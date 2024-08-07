@@ -149,7 +149,7 @@
         if (created_by == userId) {
             temp_html +=
                 `<div class="control">
-                    <button class="button is-danger">삭제</button>
+                    <button class="button is-danger" onclick="deleteSolution('${id}')">삭제</button>
                 </div>
             </div>
         </div>`;
@@ -195,7 +195,7 @@
             success: function (response) {
                 if (response.result == "success") {
                     alert("등록 완료!");
-                    location.reload();
+                    showSolution();
                 } else {
                     alert("서버 오류!");
                 }
@@ -223,7 +223,7 @@
             success: function (response) {
                 if (response.result == "success") {
                     alert("삭제 완료!");
-                    location.reload();
+                    showSolution();
                 } else {
                     alert("서버 오류!");
                 }
