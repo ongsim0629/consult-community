@@ -10,7 +10,7 @@ const getAccesssToken = () => {
     return token;
 };
 
-const checkAuthorizedAccess = () => {
+const checkAuthorizedAccessAndRedirect = () => {
     const token = getAccesssToken();
 
     if (!token) {
@@ -30,7 +30,7 @@ const checkAuthorizedAccess = () => {
 const getUserObjFromAccessToken = () => {
     const token = getAccesssToken();
 
-    if (checkAuthorizedAccess()) {
+    if (checkAuthorizedAccessAndRedirect()) {
         const base64Payload = token.split('.')[1];
         const base64 = base64Payload.replace(/-/g, '+').replace(/_/g, '/');
         const decodedJWT = JSON.parse(

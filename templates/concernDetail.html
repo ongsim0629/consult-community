@@ -3,7 +3,9 @@
 {% block title %}해우소 - 고민 상세 페이지{% endblock %}
 
 {% block content %}
-
+<script>
+    window.addEventListener('DOMContentLoaded', checkAuthorizedAccessAndRedirect)
+</script>
 <div class="section">
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <h1 class="title has-text-black" style="margin-right: 10px;">고민 읽기</h1>
