@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 from apps.concern_add import concern_add_bp
 from apps.concern_detail import concern_detail_bp
@@ -8,6 +9,9 @@ from apps.rendering_test import rendering_bp
 
 
 app = Flask(__name__)
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
+app.config["SECRET_KEY"] = SECRET_KEY
 
 app.register_blueprint(user_bp)
 app.register_blueprint(concern_add_bp)

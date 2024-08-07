@@ -68,3 +68,10 @@ const getUserObjFromAccessToken = () => {
         };
     }
 };
+
+// const handleTokenExpired = () => {
+//     alert('토큰이 만료되었습니다. 재로그인 해주세요.');
+//     removeAccessToken();
+
+//     window.location.href = PAGE_URLS['SIGN_IN'];
+// };
