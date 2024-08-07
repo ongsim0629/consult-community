@@ -19,7 +19,9 @@ concern_list_bp = Blueprint("concern_list_bp", __name__)
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
-now = datetime.now()
+
+def createNow():
+    return datetime.now()
 
 
 def strToBool(s):
