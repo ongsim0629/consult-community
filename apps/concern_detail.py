@@ -35,6 +35,12 @@ def getConcernDetail():
 
     nickname_concern_creator = concern["created_by"]
     solutions = list(db.concerns.find({"concern_id": concernId}))
+    
+    ## 수정시 조회수 +1 안 하기 위한 쿼리 파라미터
+    flag = request.args.get("flag", "false")
+    
+    if not strToBool(flag):
+        db.concerns.update_one({"_id": ObjectId(concernId)}, {'$inc': {"view_count": 1}})
 
     return render_template(
         "concernDetail.html",
