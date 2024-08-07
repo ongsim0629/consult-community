@@ -10,6 +10,10 @@ const getAccesssToken = () => {
     return token;
 };
 
+const removeAccessToken = () => {
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+};
+
 const checkAuthorizedAccessAndRedirect = () => {
     const token = getAccesssToken();
 
