@@ -21,10 +21,6 @@ client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
 
-def createNow():
-    return datetime.now()
-
-
 def strToBool(s):
     return s == "true"
 
