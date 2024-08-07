@@ -8,13 +8,47 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
     crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+  <script src="{{ url_for('static', filename='js/page-urls.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/encrypt.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script>
+    const setMenuBar = () => {
+      const $HOME = document.querySelector("#navbar-home");
+      $HOME.href = PAGE_URLS["HOME"];
+
+      const $MYPAGE = document.querySelector("#navbar-mypage");
+      $MYPAGE.href = PAGE_URLS["MYPAGE"];
+
+      const $GITHUB_LINK = document.querySelector("#github-link");
+      $GITHUB_LINK.href = PAGE_URLS["GITHUB_REPO"];
+
+      const isLoggedIn = getIsLoggedIn();
+      if (isLoggedIn) {
+        const $menuBar = $("#navbarMenu .navbar-end");
+
+        $(".navbar-burger").show()
+      } else {
+        $(".navbar-burger").hide()
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', setMenuBar);
+  </script>
+  {%with server_messages = get_flashed_messages()%}
+  {%if messages %}
+  <script type="text/javascript">
+    alert("{{server_messages[-1]}}");
+  </script>
+  {%endif%}
+  {%endwith%}
 </head>
 
 <body>
   <!-- Navbar -->
   <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="/"> 해우소 </a>
+      <a id="navbar-home" class="navbar-item" href=""> 해우소 </a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -24,8 +58,8 @@
 
     <div id="navbarMenu" class="navbar-menu">
       <div class="navbar-end">
-        <a class="navbar-item" href="/profile">회원정보</a>
-        <a class="navbar-item" href="/logout">로그아웃</a>
+        <a id="navbar-mypage" class="navbar-item" href="">회원정보</a>
+        <a class="navbar-item" onclick="logout()">로그아웃</a>
       </div>
     </div>
   </nav>
@@ -38,7 +72,7 @@
     <div class="content has-text-centered">
       <p>
         <strong>고민 해우소</strong> by
-        <a href="https://github.com/IN6P">in6p</a>.
+        <a id="github-link" href="">in6p</a>.
       </p>
     </div>
   </footer>
@@ -62,6 +96,12 @@
         });
       }
     });
+
+    function logout() {
+      removeAccessToken()
+      alert("로그아웃 되었습니다.");
+      window.location.href = PAGE_URLS["SIGN_IN"]
+    }
   </script>
 </body>
 
