@@ -47,7 +47,7 @@
                     alert('로그인 성공');
                     // 로그인 성공 후 /mypage로 리디렉션 일단 클라이언트에서 이동하는 것으로 (api: post -> SSR) 잘 모르겠어서
                     const baseUrl = window.location.origin;
-                    window.location.href = baseUrl + '/mypage';
+                    window.location.href = baseUrl + PAGE_URLS['MYPAGE'];
                 } else {
                     alert('로그인 실패');
                 }
@@ -66,7 +66,7 @@
 
     function register() {
         const baseUrl = window.location.origin;
-        window.location.href = baseUrl + '/signup';
+        window.location.href = baseUrl + PAGE_URLS["SIGNUP"];
     }
 </script>
 {% endblock %}

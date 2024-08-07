@@ -8,13 +8,29 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
     crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='js/page-urls.js') }}"></script>
+  <script>
+    const setPageUrls = () => {
+      const $HOME = document.querySelector("#navbar-home");
+      $HOME.href = PAGE_URLS["SIGN_UP"];
+
+      const $MYPAGE = document.querySelector("#navbar-mypage");
+      $MYPAGE.href = PAGE_URLS["MYPAGE"];
+
+      const $GITHUB_LINK = document.querySelector("#github-link");
+      $GITHUB_LINK.href = PAGE_URLS["GITHUB_REPO"];
+    }
+
+    window.addEventListener('load', setPageUrls);
+
+  </script>
 </head>
 
 <body>
   <!-- Navbar -->
   <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="/"> 해우소 </a>
+      <a id="navbar-home" class="navbar-item" href=""> 해우소 </a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -24,7 +40,8 @@
 
     <div id="navbarMenu" class="navbar-menu">
       <div class="navbar-end">
-        <a class="navbar-item" href="/profile">회원정보</a>
+        <a id="navbar-mypage" class="navbar-item" href="">회원정보</a>
+        <!-- TODO: logout 액션이 호출되어야함 (JWT 제거) 후 홈으로 이동 -->
         <a class="navbar-item" href="/logout">로그아웃</a>
       </div>
     </div>
@@ -38,7 +55,7 @@
     <div class="content has-text-centered">
       <p>
         <strong>고민 해우소</strong> by
-        <a href="https://github.com/IN6P">in6p</a>.
+        <a id="github-link" href="">in6p</a>.
       </p>
     </div>
   </footer>
