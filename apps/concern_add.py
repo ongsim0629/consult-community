@@ -38,21 +38,21 @@ def addConcernForm():
 @concern_add_bp.route("/concern/add", methods=["POST"])
 def addConcern():
     formData = request.form
+    print(formData)
+    ## ===== TODO: (시작) 분리 고민 필요 =====
+    token = formData["token"]
+    print(token)
 
-    # ## ===== TODO: (시작) 분리 고민 필요 =====
-    # token = get_token_from_header()
-    # print(token)
+    if not token:
+        return ({"message": "Token is missing"}), 403
 
-    # if not token:
-    #     return ({"message": "Token is missing"}), 403
+    user_dict, error = decode_access_token(token)
 
-    # user_dict, error = decode_access_token(token)
+    if error:
+        return ({"message": error}), 403
 
-    # if error:
-    #     return ({"message": error}), 403
-
-    # ## ===== TODO: (끝) 분리 고민 필요 =====
-    # nickname = user_dict["nickname"]
+    ## ===== TODO: (끝) 분리 고민 필요 =====
+    nickname = user_dict["nickname"]
 
     concernData = {
         "title": formData["title"],
@@ -60,10 +60,9 @@ def addConcern():
         "revealed": strToBool(formData["revealed"]),
         "view_count": 0,
         "created_at": now,
-        "created_by": "닉네임 테스트",  # nickname,  # 토큰에서 값 가져온다.
+        "created_by": nickname,  # 토큰에서 값 가져온다.
         "updated_at": now,
     }
     insertData = db.concerns.insert_one(concernData)
     concernId = str(insertData.inserted_id)
     return redirect(url_for("concern_detail_bp.getConcernDetail", concern_id=concernId))
-    ## TODO ## : JWT에서 닉네임 받기
