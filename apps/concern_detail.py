@@ -5,6 +5,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime
 from constants.python.page_urls import PAGE_URLS
+from .utils import formatDateTimeToStr
 
 
 load_dotenv()
@@ -16,7 +17,9 @@ concern_detail_bp = Blueprint("concern_detail_bp", __name__)
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
-now = datetime.now()
+
+def createNow():
+    return datetime.now()
 
 
 def strToBool(s):
@@ -34,6 +37,7 @@ def getConcernDetail():
     )  # ObjectId는 Json 안에 담을 수 없다. String으로 바꿔줄 것
 
     nickname_concern_creator = concern["created_by"]
+
     solutions = list(db.concerns.find({"concern_id": concernId}))
 
     # revealed가 "false"이면 alias를 "익명스님"으로 설정 -> 지금 db에 불린 false랑 string flase 혼재 중 -> 수정
@@ -55,20 +59,18 @@ def getConcernDetail():
         nickname_concern_creator=nickname_concern_creator,
     )
 
-    # return jsonify({'result':'success', 'concern':concern, 'solutions':solutions, 'msg':'getConcernDetail 성공!'})
-
-
 ## solution 조회 (API)
 @concern_detail_bp.route("/concern/solution", methods=["GET"])
 def getSolution():
     concernId = request.args.get("concernId")
 
     solutions = list(
-        db.solutions.find({"concern_id": concernId}).sort("created_at", -1)
+        db.solutions.find({"concern_id": concernId}).sort({"created_at": -1})
     )
 
     for i in solutions:
         i["_id"] = str(i["_id"])
+        i["created_at"] = formatDateTimeToStr(i["created_at"])
 
     concern = db.concerns.find_one({"_id": ObjectId(concernId)})
     concernNickname = concern["created_by"]
@@ -87,8 +89,8 @@ def getSolution():
 @concern_detail_bp.route("/concern/solution", methods=["POST"])
 def addSolution():
     formData = request.form
-    print(formData)
 
+    now = createNow()
     solutionData = {
         "content": formData["content"],
         "revealed": strToBool(formData["revealed"]),

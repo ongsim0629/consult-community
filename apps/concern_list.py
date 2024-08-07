@@ -9,6 +9,7 @@ from .auth import (
     decode_access_token,
     get_token_from_header,
 )
+from .utils import formatDateTimeToStr
 
 load_dotenv()
 MONGO_DB_URI = os.environ.get("MONGO_DB_URI")
@@ -19,7 +20,9 @@ concern_list_bp = Blueprint("concern_list_bp", __name__)
 client = MongoClient(MONGO_DB_URI)
 db = client[MONGO_DB_NAME]
 
-now = datetime.now()
+
+def createNow():
+    return datetime.now()
 
 
 def strToBool(s):
@@ -30,17 +33,20 @@ def strToBool(s):
 @concern_list_bp.route(PAGE_URLS["HOME"], methods=["GET"])
 def getConcernList():
 
-    topList = list(db.concerns.find({}).sort("view_count", -1).limit(5))
-
-    concernList = list(db.concerns.find({}).sort("created_at", -1))
+    topList = list(db.concerns.find({}).sort({"view_count": -1}).limit(5))
+    concernList = list(db.concerns.find({}).sort({"created_at": -1}))
 
     for i in topList:
         i["_id"] = str(i["_id"])
+        i["created_at"] = formatDateTimeToStr(i["created_at"])
+
         if i.get("revealed") is False:
             i["created_by"] = "익명스님"
 
     for i in concernList:
         i["_id"] = str(i["_id"])
+        i["created_at"] = formatDateTimeToStr(i["created_at"])
+
         if i.get("revealed") is False:
             i["created_by"] = "익명스님"
 
@@ -68,13 +74,11 @@ def get_concerns_by_user():
     ## ===== TODO: (끝) 분리 고민 필요 =====
 
     nickname = user_dict["nickname"]
-
-    print("nickname", nickname)
-
-    data = list(db.concerns.find({"created_by": nickname}))  # .sort("created_at", -1))
+    data = list(db.concerns.find({"created_by": nickname}).sort({"created_at": -1}))
 
     for i in data:
         i["_id"] = str(i["_id"])
+        i["created_at"] = formatDateTimeToStr(i["created_at"])
 
     ## TODO: 무한 스크롤(페이징) 고민
     return jsonify({"data": data}), 200
@@ -84,9 +88,9 @@ def get_concerns_by_user():
 @concern_list_bp.route(PAGE_URLS["HOME"] + "/test", methods=["GET"])
 def getConcernListTest():
 
-    topList = list(db.concerns.find({}).sort("view_count", -1).limit(5))
+    topList = list(db.concerns.find({}).sort({"view_count": -1}).limit(5))
 
-    concernList = list(db.concerns.find({}).sort("created_at", 1))
+    concernList = list(db.concerns.find({}).sort({"created_at": 1}))
 
     for i in topList:
         i["_id"] = str(i["_id"])

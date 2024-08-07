@@ -93,33 +93,8 @@
             </div>
         </div>
     </form>
-    <div id="solutions">
-        {% for solution in solutions %}
-        <div class="box">
-            <p><strong>{{solution.created_by}} </strong>| {{solution.content}}</p>
-        </div>
-        {% endfor %}
-        <div class="box">
-            <p><strong>너구리 </strong>| 힘내세요</p>
-        </div>
-        <div class="box">
-            <p><span style="color:rgb(175, 175, 175)">익명 스님의 해답입니다.</span></p>
-        </div>
-        <div class="box">
-            <p><strong>익명 스님 </strong>| 화이팅</p>
-        </div>
-        <div class="box">
-            <div style="display: flex; align-items: center;">
-                <div class="control" style="flex-grow: 1; margin-right: 10px;">
-                    <p><strong>강아지 </strong>| 할 수 있어요</p>
-                </div>
-                <!-- 댓글 작성자 id == 토큰 아이디인 경우 -> 삭제 버튼 display -->
-                <div class="control">
-                    <button class="button is-danger">삭제</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="solutions"></div>
+</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
@@ -150,7 +125,7 @@
                 if (response["result"] == "success") {
                     let solutions = response["solutions"];
                     for (let i = 0; i < solutions.length; i++) {
-                        makeSolution(solutions[i]["_id"], solutions[i]["content"], solutions[i]["revealed"], solutions[i]["created_by"], userId);
+                        makeSolution(solutions[i]["_id"], solutions[i]["content"], solutions[i]["revealed"], solutions[i]["created_by"], userId, solutions[i]['created_at']);
                     }
                 }
             }
@@ -158,7 +133,7 @@
     }
 
     //솔루션 생성
-    function makeSolution(id, content, revealed, created_by, userId) {
+    function makeSolution(id, content, revealed, created_by, userId, created_at) {
         let revealed_name;
 
         if (created_by == userId || revealed == true) {
@@ -170,6 +145,7 @@
             `<div class="box">
                 <div style="display: flex; align-items: center;">
                     <div class="control" style="flex-grow: 1; margin-right: 10px;">
+                        <p>생성일시 ${created_at}</p>
                         <p><strong>${revealed_name} </strong>| ${content}</p>
                     </div>`;
 
@@ -228,7 +204,6 @@
                 }
             },
             error: function (xhr, status, error) {
-                console.error("Error: " + error);
                 alert("서버 오류! 다시 시도해주세요.");
             }
         });
@@ -256,7 +231,6 @@
                 }
             },
             error: function (xhr, status, error) {
-                console.error("Error: " + error);
                 alert("서버 오류! 다시 시도해주세요.");
             }
         });
